@@ -1,7 +1,7 @@
 # 🏆 HabitQuest — Sistema de Hábitos com Conquistas
 
 > Gamificação de hábitos diários inspirada em achievements do Xbox.
-> Deploy via Docker no OrangePi, acesso remoto via VPN.
+> Deploy via Cloudflare (Pages + Workers + D1) — 100% free tier.
 
 ---
 
@@ -63,13 +63,15 @@ Formato de commit: `feat(habit): add daily check-in toggle`
 | Camada        | Tech                                                 |
 | ------------- | ---------------------------------------------------- |
 | Frontend      | React 18 + Vite + TailwindCSS                        |
-| Backend       | Node.js + Express + TypeScript                       |
-| Database      | SQLite (leve, ideal pro OrangePi)                    |
+| Backend       | Node.js + Express + TypeScript (prod: Hono + Workers) |
+| Database      | SQLite (dev) / Cloudflare D1 (prod)                  |
 | Testes        | Vitest + Supertest + Testing Library                 |
 | Quality       | Husky + lint-staged + ESLint + Prettier + commitlint |
+| Auth          | JWT + Google OAuth2 (@react-oauth/google)            |
 | Notifications | Web Push API (Service Worker)                        |
-| WhatsApp      | Evolution API (futuro)                               |
-| Deploy        | Docker + Docker Compose                              |
+| WhatsApp      | Evolution API (futuro — premium only)                |
+| Deploy        | Cloudflare (Pages + Workers + D1)                    |
+| CI/CD         | GitHub Actions → auto-deploy Cloudflare              |
 
 ---
 
@@ -325,7 +327,7 @@ src/
 | 15.15 | Requisições otimizadas: cache Redis (hot data), pagination, gzip             |
 
 > **Princípio:** Menor superfície de ataque. Menor custo. Máxima resiliência.
-> Plataforma sugerida: **Vercel (front) + Railway (back) + Neon.tech (Postgres) + Cloudflare (CDN/DDoS)**
+> Plataforma: **Cloudflare (Pages + Workers + D1)** — infraestrutura definida no EPIC 18.
 
 ### ✅ EPIC 16 — Login com Google (OAuth2)
 
@@ -343,18 +345,168 @@ src/
 > **Tech:** google-auth-library (backend) + @react-oauth/google (frontend).
 > Não precisa de senha quando vem pelo Google. O user ganha `authProvider: 'google'` no banco.
 
+### 🚀 EPIC 17 — Onboarding & Perfil
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 17.1  | Página de perfil (`/profile`) com avatar, nome, email                       |
+| 17.2  | Editar perfil: alterar nome, avatar                                          |
+| 17.3  | Onboarding flow: 3 steps após primeiro login (Google ou email)              |
+| 17.4  | Step 1: "Bem-vindo!" — configurar nome/foto (se Google, já preenche)         |
+| 17.5  | Step 2: "Seus primeiros hábitos" — escolher 3 hábitos de uma lista sugerida |
+| 17.6  | Step 3: "Como funciona" — mini-tutorial (check-in, streak, conquistas)       |
+| 17.7  | Hábitos sugeridos: Meditação, Exercício, Leitura, Água, Sono, Código, etc.  |
+| 17.8  | Marcar onboarding como completo (flag no user, não mostra novamente)         |
+| 17.9  | Link para perfil no Header (avatar ou iniciais)                             |
+
+### ☁️ EPIC 18 — Deploy Cloudflare (Lançamento Produção)
+
+> **Objetivo:** Hospedar TUDO no Cloudflare free tier. Zero custo. Global CDN. Auto-scale.
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 18.1  | **Frontend:** Cloudflare Pages (static build do Vite React)                 |
+| 18.2  | **Backend:** Cloudflare Workers (migrar Express → Hono ou adapter)          |
+| 18.3  | **Database:** Cloudflare D1 (SQLite serverless — substitui better-sqlite3)  |
+| 18.4  | **Auth secrets:** Cloudflare Workers Secrets (env vars seguras)             |
+| 18.5  | **Domínio custom:** Configurar DNS no Cloudflare (free SSL automático)      |
+| 18.6  | **CI/CD:** GitHub Actions → deploy automático no push (Pages + Workers)     |
+| 18.7  | **Rate limiting:** Cloudflare WAF rules (free tier: 5 custom rules)         |
+| 18.8  | **DDoS:** Proteção automática incluída no Cloudflare free                   |
+| 18.9  | **Cache:** Cloudflare CDN para assets estáticos (auto)                      |
+| 18.10 | **Wrangler config:** wrangler.toml para Workers + D1 bindings               |
+| 18.11 | **Migration D1:** Adaptar schema SQL para Cloudflare D1                     |
+| 18.12 | **CORS/Headers:** Configurar headers de segurança via _headers file         |
+| 18.13 | **Preview deploys:** Branch previews automáticos no Cloudflare Pages        |
+| 18.14 | **Monitoring:** Cloudflare Analytics (grátis) + Workers Logs                |
+
+> **Stack produção Cloudflare (100% free tier):**
+>
+> | Componente | Serviço Cloudflare | Limite Free |
+> |---|---|---|
+> | Frontend | Pages | Unlimited bandwidth, 500 builds/mês |
+> | Backend API | Workers | 100k requests/dia, 10ms CPU/req |
+> | Database | D1 | 5GB storage, 5M reads/dia, 100k writes/dia |
+> | CDN/Cache | Automático | Ilimitado |
+> | SSL | Universal SSL | Grátis + auto-renew |
+> | DDoS | Always-on | Layer 3/4/7 gratuito |
+> | DNS | Cloudflare DNS | Fastest DNS global |
+> | Secrets | Workers Secrets | Ilimitado |
+>
+> **Nota sobre Workers:** Express não roda direto em Workers. Opções:
+> 1. **Hono** (drop-in replacement, 14KB, feito pra Workers) — recomendado
+> 2. **itty-router** (micro-router pra Workers)
+> 3. **@cloudflare/workers-types** + fetch handler manual
+>
+> **Migração recomendada:**
+> - Express routes → Hono routes (sintaxe quase idêntica)
+> - better-sqlite3 → D1 client (SQL compatível, async)
+> - dotenv → Workers Secrets (wrangler secret put)
+> - fs/path → não disponível (serverless = stateless)
+
+### 📱 EPIC 19 — App Mobile (Capacitor — APK/IPA)
+
+> **Objetivo:** Transformar o app Vite React em app nativo Android/iOS usando Capacitor.
+> O app continua sendo web (mesma codebase), mas roda dentro de um WebView nativo com acesso a APIs do celular.
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 19.1  | Instalar Capacitor no monorepo (`@capacitor/core` + `@capacitor/cli`)       |
+| 19.2  | `npx cap init` — configurar nome, bundle ID (com.habitquest.app)            |
+| 19.3  | Adicionar plataforma Android (`npx cap add android`)                        |
+| 19.4  | Adicionar plataforma iOS (`npx cap add ios`) — opcional, requer Mac         |
+| 19.5  | Configurar `capacitor.config.ts` (server URL dev/prod, plugins)             |
+| 19.6  | Build pipeline: `vite build` → `npx cap sync` → APK                        |
+| 19.7  | **Plugin: Push Notifications** — `@capacitor/push-notifications` (nativo)   |
+| 19.8  | **Plugin: Haptics** — `@capacitor/haptics` (vibração ao completar hábito)   |
+| 19.9  | **Plugin: Local Notifications** — lembretes mesmo offline                   |
+| 19.10 | **Plugin: Status Bar** — customizar cor da status bar (dark theme)           |
+| 19.11 | **Plugin: Splash Screen** — tela de loading customizada com logo            |
+| 19.12 | **Plugin: App Badge** — badge com número de hábitos pendentes               |
+| 19.13 | Splash screen + app icon (gerar em todos os tamanhos necessários)            |
+| 19.14 | Deep links: abrir app direto em hábito/conquista via URL                     |
+| 19.15 | Testar em dispositivo real via `npx cap run android`                         |
+| 19.16 | Gerar APK assinado (release build) para distribuição direta                  |
+| 19.17 | Configurar live reload em dev (`npx cap run android --livereload`)           |
+
+> **Por que Capacitor (e não React Native)?**
+> - ✅ Mesma codebase (zero rewrite)
+> - ✅ Todos os plugins nativos (push, haptics, camera, etc.)
+> - ✅ Build APK/IPA direto
+> - ✅ Mantido pela Ionic (empresa grande, estável)
+> - ✅ Hot reload em dev
+> - ✅ Pode publicar na Play Store / App Store
+> - ✅ PWA + Nativo com mesmo código
+>
+> **Alternativas descartadas:**
+> - **TWA (Trusted Web Activity):** Só Chrome, sem acesso a APIs nativas, sem iOS
+> - **React Native:** Rewrite completo, codebase separada
+> - **Flutter:** Linguagem diferente (Dart), rewrite total
+> - **Electron:** Desktop only, não mobile
+>
+> **Requisitos:**
+> - Android Studio instalado (para build APK)
+> - JDK 17+ (para Gradle)
+> - Xcode (apenas se quiser iOS — precisa de Mac)
+
+### 🏪 EPIC 20 — Publicação nas Lojas (Play Store & App Store)
+
+> **Objetivo:** Publicar o app nas lojas oficiais para distribuição pública.
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 20.1  | Criar conta Google Play Console (taxa única $25 USD)                        |
+| 20.2  | Criar conta Apple Developer ($99/ano — opcional, só se quiser iOS)           |
+| 20.3  | Gerar keystore de produção (signing key Android)                             |
+| 20.4  | Configurar versionamento (versionCode + versionName no Gradle)               |
+| 20.5  | Gerar AAB (Android App Bundle) assinado para Play Store                      |
+| 20.6  | Screenshots do app (mínimo 2, recomendado 8 — phone + tablet)                |
+| 20.7  | Feature graphic (1024×500) + app icon (512×512 hi-res)                       |
+| 20.8  | Descrição da loja (título, descrição curta/longa, tags, categoria)            |
+| 20.9  | Política de privacidade (LGPD — URL pública obrigatória)                    |
+| 20.10 | Classificação de conteúdo (IARC rating questionnaire)                        |
+| 20.11 | Upload AAB + preencher listing → Enviar para revisão                        |
+| 20.12 | Configurar Google Play App Signing (chave gerenciada pelo Google)             |
+| 20.13 | Internal testing track → Closed beta → Open → Production                    |
+| 20.14 | CI/CD: GitHub Actions → build AAB → upload Play Store (Fastlane)             |
+| 20.15 | ASO (App Store Optimization): keywords, A/B test de ícone/screenshots        |
+| 20.16 | In-app updates: `@capacitor-community/in-app-updates` (forçar update)       |
+| 20.17 | Crash reporting: Firebase Crashlytics (free, integra com Capacitor)           |
+| 20.18 | Analytics: Firebase Analytics (free, eventos custom)                          |
+
+> **Custo total para lançar:**
+>
+> | Item | Custo | Frequência |
+> |------|-------|-----------|
+> | Google Play Console | $25 | Uma vez (lifetime) |
+> | Apple Developer | $99 | Anual (opcional) |
+> | Cloudflare (backend) | $0 | Free tier |
+> | Firebase Crashlytics | $0 | Free |
+> | Total mínimo (só Android) | **~R$140** | Uma vez |
+>
+> **Timeline sugerido:**
+> 1. EPIC 19 primeiro → gera APK → testa no seu celular
+> 2. Distribui APK direto (sem loja) para amigos/beta testers
+> 3. Quando validar com ~10 users → EPIC 20 → Play Store
+>
+> **Dica:** Antes de pagar a conta de dev, distribui o APK diretamente (sideload).
+> Android permite instalar APK sem loja. Perfeito pra validar o produto primeiro.
+
 ---
 
 ## Roadmap de Lançamento
 
-| Fase          | EPICs                   | Objetivo                          |
-| ------------- | ----------------------- | --------------------------------- |
-| **MVP Local** | 1–4, 6–7 ✅            | App funcional single-user         |
-| **Polish**    | 8, 9                    | UX viciante + visual PRO          |
-| **Social**    | 10, 11, 13              | Viralização + retenção por grupo  |
-| **Mindset**   | 12                      | Diferencial emocional             |
-| **SaaS**      | 14, 15                  | Monetização + deploy seguro       |
-| **Growth**    | 5 (WhatsApp)            | Canal de retenção premium         |
+| Fase          | EPICs                   | Objetivo                          | Status |
+| ------------- | ----------------------- | --------------------------------- | ------ |
+| **MVP Local** | 1–4, 6–7, 16–17        | App funcional com auth + onboarding | ✅     |
+| **Launch Web**| 18                      | Deploy Cloudflare (produção free) | ⬜     |
+| **Mobile**    | 19                      | APK nativo via Capacitor          | ⬜     |
+| **Lojas**     | 20                      | Play Store + App Store            | ⬜     |
+| **Polish**    | 8, 9                    | UX viciante + visual PRO          | ⬜     |
+| **Social**    | 10, 11, 13              | Viralização + retenção por grupo  | ⬜     |
+| **Mindset**   | 12                      | Diferencial emocional             | ⬜     |
+| **SaaS**      | 14, 15                  | Monetização + segurança avançada  | ⬜     |
+| **Growth**    | 5 (WhatsApp)            | Canal de retenção premium         | ⬜     |
 
 ---
 
@@ -380,23 +532,41 @@ src/
 
 > 6.1, 6.4, 6.5, 7.1 → 7.6
 
-### Sprint 6 — Visual Juice 🎨
+### Sprint 6 — Google OAuth + Onboarding ✅
+
+> 16.1 → 16.8, 17.1 → 17.9
+
+### Sprint 7 — Deploy Cloudflare (Lançamento Web) 🚀
+
+> 18.1 → 18.14 (migração pra produção serverless)
+
+### Sprint 8 — Mobile App (Capacitor) 📱
+
+> 19.1 → 19.17 (gerar APK, plugins nativos, testar no celular)
+
+### Sprint 9 — Visual Juice 🎨
 
 > 9.1 → 9.11 (rebranding + gamificação visual)
 
-### Sprint 7 — Wallpaper + Sharing
+### Sprint 10 — Wallpaper + Sharing
 
 > 8.1 → 8.8, 13.1 → 13.8
 
-### Sprint 8 — Social
+### Sprint 11 — Social
 
-> 10.1 → 10.10 (amigos + perfil)
+> 10.1 → 10.10 (amigos + perfil público)
 
-### Sprint 9 — Grupos & Motivação
+### Sprint 12 — Grupos & Motivação
 
 > 11.1 → 11.9, 12.1 → 12.8
 
-### Sprint 10 — SaaS & Monetização
+### Sprint 13 — SaaS & Monetização
+
+> 14.1 → 14.11, 15.1 → 15.15
+
+### Sprint 14 — Play Store Launch 🏪
+
+> 20.1 → 20.18 (publicar nas lojas oficiais)
 
 > 14.1 → 14.11, 15.1 → 15.15
 
@@ -451,3 +621,92 @@ CREATE TABLE notification_settings (
   enabled BOOLEAN DEFAULT 1
 );
 ```
+
+---
+
+## 🏁 Concorrentes & Diferenciais
+
+| App | Forte em | Fraco em | HabitQuest supera em |
+|-----|----------|----------|----------------------|
+| **Habitica** | Gamificação RPG, social | UI datada, complexa demais, intimidante | UI moderna + simplicidade + conquistas estilo Xbox |
+| **Streaks** | Minimalismo, iOS nativo | Só iOS, sem social, sem gamificação | Multiplataforma + achievements + grupos |
+| **Loop Habit Tracker** | Open source, gráficos | Sem gamificação, sem social, feio | Gamificação viciante + UX premium |
+| **Daylio** | Mood tracking, journaling | Sem hábitos puros, paywall agressivo | Foco em hábitos + free generoso |
+| **Fabulous** | Onboarding incrível, coaching | Muito caro ($99/ano), sem social | Preço justo + comunidade + achievements |
+| **Duolingo** | Gamificação PERFEITA, streaks | Só idiomas | Inspiração direta: mecânicas aplicadas a qualquer hábito |
+| **Notion/Todoist** | Flexível, tudo-em-um | Não gamificado, requer setup manual | Zero-config + dopamina instantânea |
+
+### 🎯 Posicionamento HabitQuest
+> **"Duolingo para qualquer hábito"** — a gamificação viciante do Duo aplicada a metas pessoais.
+> Fácil como Streaks, viciante como Duolingo, social como Habitica, bonito como Nubank.
+
+### Diferenciais únicos:
+1. **Achievements estilo Xbox/PlayStation** — não existe em nenhum concorrente
+2. **Wallpaper motivacional gerado** — lembrete visual no celular 24h
+3. **Afirmações + Vision Board** — mentalidade integrada ao app de hábitos
+4. **Grupos com metas conjuntas** — accountability + competição saudável
+5. **Share automático p/ Stories** — viralização orgânica
+6. **100% gratuito pra funcionar bem** — premium é upgrade, não necessidade
+
+---
+
+## 💡 Ideias Futuras (Backlog de Inovação)
+
+> Ideias para explorar após lançamento dos EPICs 1-18. Priorizadas por impacto estimado.
+
+### 🔥 Alto Impacto (próximos EPICs após lançamento)
+
+| Ideia | Descrição | Inspiração |
+|-------|-----------|------------|
+| **AI Coach** | IA que analisa seus padrões e sugere hábitos, horários ideais, e dá coaching personalizado | Fabulous + ChatGPT |
+| **Habit Stacking** | Conectar hábitos em cadeia (ex: "após café → meditar → ler 10min"). Baseado em Atomic Habits | James Clear |
+| **Streak Insurance** | 1x por mês pode "recuperar" um dia perdido sem quebrar streak (premium) | Duolingo freeze |
+| **Weekly Review** | Resumo semanal automatizado com gráficos + insights + sugestões | Notion recap |
+| **Widgets nativos** | Widget iOS/Android com progresso do dia (PWA → futuro nativo) | Streaks widget |
+| **Apple Watch / WearOS** | Check-in rápido pelo relógio (vibra no horário do hábito) | Apple Health |
+| **Pomodoro integrado** | Timer Pomodoro vinculado a hábitos de foco/estudo | Forest app |
+
+### 🌟 Médio Impacto (diferenciação)
+
+| Ideia | Descrição | Inspiração |
+|-------|-----------|------------|
+| **Habit Marketplace** | Compartilhar/importar "packs" de hábitos (ex: "Pack Atleta", "Pack Dev Sênior") | Notion templates |
+| **Challenges semanais** | Desafios da comunidade com prêmios (badges exclusivos) | Fitbit challenges |
+| **Dark/Light auto** | Tema muda baseado no horário (escuro à noite) | iOS auto theme |
+| **Integração Saúde** | Conectar Google Fit/Apple Health → auto-check hábitos de exercício | Strava |
+| **Música ambiente** | Playlists lofi/focus enquanto pratica hábitos | Brain.fm |
+| **Habit Analytics Pro** | Heatmap anual (estilo GitHub), correlações entre hábitos, predição | GitHub contributions |
+| **Modo Foco** | Bloquear notificações e mostrar só o hábito atual (deep work) | Forest |
+| **Rewards reais** | Parceria com marcas: complete 30 dias → cupom de desconto | Sweatcoin |
+
+### 🚀 Moonshots (longo prazo)
+
+| Ideia | Descrição | Inspiração |
+|-------|-----------|------------|
+| **App nativo (React Native)** | Migrar PWA → app nativo pra notificações ricas + widgets + Siri/Google Assistant | — |
+| **HabitQuest for Teams** | Versão B2B para empresas (wellness corporativo, OKRs pessoais) | Headspace for Work |
+| **API pública** | Permitir integrações externas (Zapier, IFTTT, automações) | Todoist API |
+| **Voz** | "Hey Google, completar hábito meditação" (Actions on Google) | Google Home |
+| **AR Badges** | Ver conquistas em realidade aumentada (hype viral) | Pokémon GO |
+| **NFT Achievements** | Achievements como NFTs colecionáveis (se mercado voltar) | StepN |
+| **Comunidade global** | Feed público de conquistas, trending habits, top users do mês | Twitter/Reddit |
+| **Plano família** | Pais acompanham hábitos dos filhos, gamificação para crianças | Family plan |
+| **White-label** | Empresas customizam o app com marca delas (receita B2B) | — |
+
+### 🎮 Gamificação Avançada (ideias de mecânica)
+
+| Mecânica | Como funciona |
+|----------|--------------|
+| **Boss Battles** | A cada 30 dias de streak, enfrenta um "boss" (desafio intenso de 3 dias) |
+| **Skill Tree** | Árvore de habilidades que desbloqueia conforme evolui em categorias |
+| **Seasons** | Seasons trimestrais com recompensas exclusivas (tipo Fortnite Battle Pass) |
+| **Pet Virtual** | Bichinho virtual que evolui conforme você completa hábitos (Tamagotchi) |
+| **Random Events** | "Evento surpresa: complete 2 hábitos extras hoje → 3x XP!" |
+| **Loot Boxes** | Ao desbloquear conquista, ganha "caixa" com tema/avatar/título aleatório |
+| **Clãs** | Evolução de "Grupos" → Clãs com nome, brasão, guerras entre clãs |
+| **Prestige** | Ao completar TODAS as conquistas, pode "prestigiar" (reset + badge ouro) |
+
+---
+
+> **Prioridade:** Lançar MVP (EPICs 1-7, 16-18) → validar com usuários reais → decidir próximos EPICs baseado em feedback.
+> **Mantra:** Ship fast, iterate faster. 🚀

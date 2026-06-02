@@ -5,7 +5,10 @@ import { AchievementsPage } from './pages/AchievementsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { OnboardingFlow } from './pages/OnboardingFlow';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { useState } from 'react';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -16,8 +19,16 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const [onboardingDone, setOnboardingDone] = useState(
+    () => localStorage.getItem('onboarding_done') === 'true'
+  );
 
   if (loading) return null;
+
+  // Show onboarding for logged-in users who haven't completed it
+  if (user && !onboardingDone) {
+    return <OnboardingFlow onComplete={() => setOnboardingDone(true)} />;
+  }
 
   return (
     <Routes>
@@ -32,6 +43,7 @@ function AppRoutes() {
                 <Route path="/achievements" element={<AchievementsPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<Navigate to="/habits" replace />} />
               </Routes>
             </Layout>

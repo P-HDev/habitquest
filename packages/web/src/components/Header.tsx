@@ -10,6 +10,10 @@ export function Header() {
       pathname === path ? 'text-primary-400 font-semibold' : 'text-gray-300 hover:text-primary-400'
     }`;
 
+  const initials = user?.name
+    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    : '?';
+
   return (
     <header className="bg-dark-surface border-b border-dark-border sticky top-0 z-40">
       <div className="container mx-auto px-4 py-3 max-w-4xl flex items-center justify-between">
@@ -30,15 +34,15 @@ export function Header() {
           <Link to="/settings" className={linkClass('/settings')}>
             ⚙️
           </Link>
-          {user && (
-            <button
-              onClick={logout}
-              className="text-gray-500 hover:text-red-400 transition-colors text-sm"
-              title="Sair"
-            >
-              🚪
-            </button>
-          )}
+          <Link to="/profile" className="ml-1">
+            {user?.avatarUrl ? (
+              <img src={user.avatarUrl} alt="" className="w-7 h-7 rounded-full border border-dark-border" />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-primary-500/30 border border-primary-400/50 flex items-center justify-center text-xs font-bold text-primary-300">
+                {initials}
+              </div>
+            )}
+          </Link>
         </nav>
       </div>
     </header>
