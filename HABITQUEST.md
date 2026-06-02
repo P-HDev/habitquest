@@ -204,37 +204,185 @@ src/
 > **Tech:** Canvas API (100% client-side, zero dependências). Gera imagem para o usuário
 > usar como fundo de tela no celular ou computador — lembrete visual das metas.
 
+### 🎨 EPIC 9 — UI/UX Juice (Rebranding Gamificado)
+
+> **Inspiração:** Nubank, Uber, iFood, Duolingo — plataformas viciantes e gamificadas.
+
+| ID   | Feature                                                                        |
+| ---- | ------------------------------------------------------------------------------ |
+| 9.1  | Rebranding de cores: paleta vibrante com gradients (neon/gold accents)         |
+| 9.2  | Iconografia custom: ícones animados (Lottie) em vez de emojis                  |
+| 9.3  | Micro-interações: haptic feedback, confetti ao completar, som de "level up"    |
+| 9.4  | Onboarding gamificado (tutorial interativo com progress bar)                   |
+| 9.5  | Barra de XP global: nível do usuário baseado em atividade total                |
+| 9.6  | Daily rewards: streak visual estilo calendário com chamas                      |
+| 9.7  | Animações de transição de página (page transitions suaves)                     |
+| 9.8  | Card redesign: glassmorphism + brilho na borda ao completar                    |
+| 9.9  | Empty states ilustrados (sem hábitos, sem conquistas, etc.)                    |
+| 9.10 | Loading skeletons + pull-to-refresh no mobile                                  |
+| 9.11 | Tema dinâmico: cor do header muda conforme progresso do dia (vermelho→verde)   |
+
+> **Objetivo:** Criar a sensação de "just one more" — o usuário quer abrir o app por vício positivo.
+
+### 👥 EPIC 10 — Social (Amigos & Perfil)
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 10.1  | Username/nickname único (perfil público simplificado)                        |
+| 10.2  | Busca de amigos por nickname                                                 |
+| 10.3  | Envio/aceite de solicitação de amizade                                       |
+| 10.4  | Lista de amigos + status online/streak atual                                 |
+| 10.5  | Configuração de privacidade: escolher quais hábitos compartilhar (default: nenhum) |
+| 10.6  | Perfil público: exibe conquistas + hábitos permitidos + streak record        |
+| 10.7  | Comparação lado-a-lado (meu progresso vs amigo)                             |
+| 10.8  | Feed de atividades: "Fulano completou 30 dias de X 🔥"                      |
+| 10.9  | Ranking/Leaderboard entre amigos (streak, conquistas)                        |
+| 10.10 | Bloquear/remover amigo                                                       |
+
+> **Privacidade:** Nenhum hábito é público por padrão. O usuário opta-in individualmente.
+
+### 👨‍👩‍👧‍👦 EPIC 11 — Grupos & Metas Conjuntas
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 11.1  | Criar grupo (nome, descrição, ícone, até 20 membros)                        |
+| 11.2  | Convidar amigos para grupo (link ou nickname)                                |
+| 11.3  | Meta conjunta: definir hábito compartilhado (ex: "todo mundo meditar 30 dias")|
+| 11.4  | Dashboard do grupo: progresso coletivo + individual                          |
+| 11.5  | Chat simples no grupo (mensagens motivacionais)                              |
+| 11.6  | Conquista de grupo: "Squad Goal" (todos completam meta)                      |
+| 11.7  | Notificação: "3/5 do grupo já completaram hoje, falta você!"                |
+| 11.8  | Ranking interno do grupo (quem está mais consistente)                        |
+| 11.9  | Sair do grupo / admin pode remover membro                                   |
+
+### 🧠 EPIC 12 — Área de Motivação & Afirmações
+
+> **Inspiração:** Mentalidade de campeão — Michael Jackson, Kanye West, Muhammad Ali.
+> Afirmar quem você quer ser até se tornar realidade.
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 12.1  | Seção "Minhas Afirmações": criar frases pessoais (ex: "Eu sou o melhor dev")|
+| 12.2  | Rotação diária: afirmação destaque muda todo dia (ou aleatória)             |
+| 12.3  | Tela de afirmação morning ritual: ao abrir app, exibe frase full-screen      |
+| 12.4  | Banco de imagens motivacionais (upload pessoal ou galeria curada)            |
+| 12.5  | Vision Board: montar quadro visual com imagens + frases                      |
+| 12.6  | Widget de afirmação (notificação push com afirmação do dia)                  |
+| 12.7  | Histórico de afirmações (marcar como "manifested" quando conquistar)         |
+| 12.8  | Compartilhar afirmação como story (imagem gerada com a frase)                |
+
+> **Mindset:** Repetição cria crença. Crença cria ação. Ação cria resultado.
+
+### 📤 EPIC 13 — Compartilhamento Social
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 13.1  | Gerar card de progresso individual (imagem com stats bonitos)                |
+| 13.2  | Gerar card de progresso de grupo                                             |
+| 13.3  | Share to Instagram Stories (formato 9:16, fundo gradiente)                   |
+| 13.4  | Share to WhatsApp / Telegram / Twitter (link + preview)                      |
+| 13.5  | Deep link: ao clicar no share, amigo vai pra perfil público no app           |
+| 13.6  | Template customizável: escolher tema/cor do card de compartilhamento          |
+| 13.7  | "Conquista nova!" — auto-gerar imagem ao desbloquear achievement             |
+| 13.8  | QR Code do perfil para adicionar amigo presencialmente                       |
+
+### 💰 EPIC 14 — Monetização (Free vs Premium)
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 14.1  | Definição de tiers: Free / Premium                                           |
+| 14.2  | **Free tier:** máx 5 hábitos, 1 grupo, notificação push apenas              |
+| 14.3  | **Premium:** hábitos ilimitados, grupos ilimitados, WhatsApp + email notif.  |
+| 14.4  | Premium: temas exclusivos, wallpaper generator avançado                      |
+| 14.5  | Premium: analytics avançados (gráficos de streak, heatmap de atividade)      |
+| 14.6  | Paywall UI: tela bonita mostrando benefícios (estilo Spotify/iFood)          |
+| 14.7  | Integração pagamento: Stripe (cartão) + PIX (Brasil)                        |
+| 14.8  | Planos: Mensal (R$14,90) / Anual (R$119,90 = 2 meses grátis)               |
+| 14.9  | Trial: 7 dias premium grátis ao registrar                                    |
+| 14.10 | Webhook de pagamento + atualização de tier no banco                          |
+| 14.11 | Controle de limites no backend (middleware de tier)                          |
+
+> **Estratégia:** Free generoso o suficiente pra viciar. Premium pra quem quer escalar.
+
+### 🔒 EPIC 15 — Infraestrutura SaaS (Segurança & Deploy)
+
+| ID    | Feature                                                                      |
+| ----- | ---------------------------------------------------------------------------- |
+| 15.1  | Rate limiting (express-rate-limit): 100 req/min por IP                      |
+| 15.2  | Helmet.js: headers de segurança (CSP, HSTS, X-Frame-Options)               |
+| 15.3  | CORS configurado (só domínios permitidos em produção)                       |
+| 15.4  | Validação de input com Zod em todos endpoints                                |
+| 15.5  | LGPD: endpoint de exportação de dados pessoais + exclusão de conta           |
+| 15.6  | LGPD: termos de uso + política de privacidade (aceite no registro)           |
+| 15.7  | DDoS protection: Cloudflare (free tier) como proxy                          |
+| 15.8  | Database: migrar para PostgreSQL (Supabase ou Neon.tech — free tier)         |
+| 15.9  | Deploy backend: Railway / Render (free tier com auto-sleep)                  |
+| 15.10 | Deploy frontend: Vercel (free, edge, CDN global)                            |
+| 15.11 | CI/CD: GitHub Actions (lint + test + deploy automático)                      |
+| 15.12 | Monitoramento: Sentry (erros) + Uptime Robot (disponibilidade)              |
+| 15.13 | Backup automático do banco (cron diário)                                     |
+| 15.14 | Variáveis de ambiente seguras (secrets no deploy, nunca no código)           |
+| 15.15 | Requisições otimizadas: cache Redis (hot data), pagination, gzip             |
+
+> **Princípio:** Menor superfície de ataque. Menor custo. Máxima resiliência.
+> Plataforma sugerida: **Vercel (front) + Railway (back) + Neon.tech (Postgres) + Cloudflare (CDN/DDoS)**
+
+---
+
+## Roadmap de Lançamento
+
+| Fase          | EPICs                   | Objetivo                          |
+| ------------- | ----------------------- | --------------------------------- |
+| **MVP Local** | 1–4, 6–7 ✅            | App funcional single-user         |
+| **Polish**    | 8, 9                    | UX viciante + visual PRO          |
+| **Social**    | 10, 11, 13              | Viralização + retenção por grupo  |
+| **Mindset**   | 12                      | Diferencial emocional             |
+| **SaaS**      | 14, 15                  | Monetização + deploy seguro       |
+| **Growth**    | 5 (WhatsApp)            | Canal de retenção premium         |
+
 ---
 
 ## Sprints (XP - Small Releases)
 
-### Sprint 1 — Fundação + Quality Gates
+### Sprint 1 — Fundação + Quality Gates ✅
 
 > 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7
 
-### Sprint 2 — Core Habits (TDD)
+### Sprint 2 — Core Habits (TDD) ✅
 
 > 2.1 → 2.7 (domain + API + tela principal)
 
-### Sprint 3 — Conquistas
+### Sprint 3 — Conquistas ✅
 
 > 3.1 → 3.6
 
-### Sprint 4 — Notifications & PWA
+### Sprint 4 — Notifications & PWA ✅
 
 > 4.1 → 4.4, 6.2, 6.3
 
-### Sprint 5 — Polish
+### Sprint 5 — Polish & Auth ✅
 
-> 2.8, 2.9, 3.7, 4.5, 6.1, 6.4, 6.5
+> 6.1, 6.4, 6.5, 7.1 → 7.6
 
-### Sprint 6 — WhatsApp
+### Sprint 6 — Visual Juice 🎨
 
-> 5.1 → 5.4
+> 9.1 → 9.11 (rebranding + gamificação visual)
 
-### Sprint 7 — Autenticação
+### Sprint 7 — Wallpaper + Sharing
 
-> 7.1 → 7.6
+> 8.1 → 8.8, 13.1 → 13.8
+
+### Sprint 8 — Social
+
+> 10.1 → 10.10 (amigos + perfil)
+
+### Sprint 9 — Grupos & Motivação
+
+> 11.1 → 11.9, 12.1 → 12.8
+
+### Sprint 10 — SaaS & Monetização
+
+> 14.1 → 14.11, 15.1 → 15.15
 
 ---
 
