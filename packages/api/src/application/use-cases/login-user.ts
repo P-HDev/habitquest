@@ -26,6 +26,11 @@ export class LoginUser {
       throw new Error('INVALID_CREDENTIALS');
     }
 
+    // Google-only accounts can't login with password
+    if (!user.passwordHash) {
+      throw new Error('INVALID_CREDENTIALS');
+    }
+
     const valid = bcrypt.compareSync(input.password, user.passwordHash);
     if (!valid) {
       throw new Error('INVALID_CREDENTIALS');

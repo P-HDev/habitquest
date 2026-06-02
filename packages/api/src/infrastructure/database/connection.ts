@@ -86,4 +86,26 @@ function runMigrations(database: Database.Database): void {
 
     INSERT OR IGNORE INTO notification_settings (id, enabled, hours) VALUES (1, 1, '08:00,14:00,21:00');
   `);
+
+  // Migration: add Google OAuth columns to existing users table
+  const cols = database.prepare("PRAGMA table_info(users)").all() as any[];
+  const colNames = cols.map((c: any) => c.name);
+  if (!colNames.includes('auth_provider')) {
+    database.exec("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local'");
+  }
+  if (!colNames.includes('google_id')) {
+    database.exec("ALTER TABLE users ADD COLUMN google_id TEXT");
+  }
+  if (!colNames.includes('avatar_url')) {
+    database.exec("ALTER TABLE users ADD COLUMN avatar_url TEXT");
+  }
+  // Make password_hash nullable (already nullable in new schema, but old rows may need this)
+  // SQLite doesn't support ALTER COLUMN, but TEXT columns already accept NULL
+
+  // Migration: add user_id to habits if missing
+  const habitCols = database.prepare("PRAGMA table_info(habits)").all() as any[];
+  const habitColNames = habitCols.map((c: any) => c.name);
+  if (!habitColNames.includes('user_id')) {
+    database.exec("ALTER TABLE habits ADD COLUMN user_id TEXT");
+  }
 }

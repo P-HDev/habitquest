@@ -32,17 +32,19 @@ export async function login(email: string, password: string): Promise<AuthTokens
   return res.json();
 }
 
-export async function googleLogin(idToken: string): Promise<AuthTokens> {
+export async function googleLogin(accessToken: string): Promise<AuthTokens> {
+  console.log('[Auth] Sending Google access_token to backend, length:', accessToken.length);
   const res = await fetch(`${API_BASE}/auth/google`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
+    body: JSON.stringify({ accessToken }),
   });
+  const data = await res.json();
+  console.log('[Auth] Google login response:', res.status, data);
   if (!res.ok) {
-    const data = await res.json();
     throw new Error(data.error || 'Erro ao fazer login com Google');
   }
-  return res.json();
+  return data;
 }
 
 export async function refreshToken(token: string): Promise<AuthTokens> {

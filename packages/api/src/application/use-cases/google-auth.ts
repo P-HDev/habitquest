@@ -5,7 +5,6 @@ import { IUserRepository } from '../../domain/repositories/user.repository.js';
 import { User } from '../../domain/entities/user.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'habitquest-secret-dev';
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const ACCESS_TOKEN_EXPIRY = '2h';
 const REFRESH_TOKEN_EXPIRY = '7d';
 
@@ -15,37 +14,40 @@ interface GoogleAuthResult {
   user: { id: string; email: string; name: string; avatarUrl?: string };
 }
 
+interface GoogleUserInfo {
+  sub: string;
+  email: string;
+  name: string;
+  picture?: string;
+}
+
 export class GoogleAuth {
-  private client: OAuth2Client;
+  constructor(private userRepo: IUserRepository) {}
 
-  constructor(private userRepo: IUserRepository) {
-    this.client = new OAuth2Client(GOOGLE_CLIENT_ID);
-  }
+  async execute(token: string): Promise<GoogleAuthResult> {
+    // The token from useGoogleLogin is an access_token, not an id_token
+    // We use it to fetch user info from Google's userinfo endpoint
+    const userInfo = await this.fetchGoogleUserInfo(token);
 
-  async execute(idToken: string): Promise<GoogleAuthResult> {
-    const payload = await this.verifyGoogleToken(idToken);
-
-    if (!payload || !payload.email) {
+    if (!userInfo || !userInfo.email) {
       throw new Error('INVALID_GOOGLE_TOKEN');
     }
 
-    const { email, name, sub: googleId, picture } = payload;
-    let user = this.userRepo.findByGoogleId(googleId!) || this.userRepo.findByEmail(email!);
+    const { email, name, sub: googleId, picture } = userInfo;
+    let user = this.userRepo.findByGoogleId(googleId) || this.userRepo.findByEmail(email);
 
     if (user) {
-      // Link Google ID if not already linked
       if (!user.googleId) {
-        this.userRepo.updateGoogleId(user.id, googleId!);
+        this.userRepo.updateGoogleId(user.id, googleId);
       }
     } else {
-      // Create new user from Google
       user = {
         id: randomUUID(),
-        email: email!.toLowerCase(),
-        name: name || email!.split('@')[0],
-        passwordHash: null,
+        email: email.toLowerCase(),
+        name: name || email.split('@')[0],
+        passwordHash: '',
         authProvider: 'google',
-        googleId: googleId!,
+        googleId: googleId,
         avatarUrl: picture,
         createdAt: new Date().toISOString(),
       };
@@ -62,14 +64,15 @@ export class GoogleAuth {
     };
   }
 
-  private async verifyGoogleToken(idToken: string) {
+  private async fetchGoogleUserInfo(accessToken: string): Promise<GoogleUserInfo> {
     try {
-      const ticket = await this.client.verifyIdToken({
-        idToken,
-        audience: GOOGLE_CLIENT_ID,
+      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
-      return ticket.getPayload();
-    } catch {
+      if (!res.ok) throw new Error('Failed to fetch user info');
+      return await res.json();
+    } catch (err) {
+      console.error('[GoogleAuth] Failed to fetch user info:', err);
       throw new Error('INVALID_GOOGLE_TOKEN');
     }
   }

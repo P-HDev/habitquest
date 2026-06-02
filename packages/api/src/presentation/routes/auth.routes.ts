@@ -90,21 +90,24 @@ export function createAuthRouter(userRepo?: IUserRepository): Router {
 
   router.post('/google', async (req: Request, res: Response) => {
     try {
-      const { idToken } = req.body;
-      if (!idToken) {
-        res.status(400).json({ error: 'Google ID token obrigatório' });
+      const { accessToken, idToken } = req.body;
+      const token = accessToken || idToken;
+      if (!token) {
+        res.status(400).json({ error: 'Google token obrigatório (accessToken ou idToken)' });
         return;
       }
 
+      console.log('[Auth Google] Received token, length:', token.length);
       const useCase = new GoogleAuth(getUserRepo());
-      const result = await useCase.execute(idToken);
+      const result = await useCase.execute(token);
       res.json(result);
     } catch (err: any) {
+      console.error('[Auth Google] Error:', err.message);
       if (err.message === 'INVALID_GOOGLE_TOKEN') {
         res.status(401).json({ error: 'Token do Google inválido' });
         return;
       }
-      res.status(500).json({ error: 'Erro interno' });
+      res.status(500).json({ error: 'Erro interno', detail: err.message });
     }
   });
 
