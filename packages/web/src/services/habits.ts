@@ -47,7 +47,7 @@ export async function createHabit(data: {
   return res.json();
 }
 
-export async function checkinHabit(habitId: string): Promise<{ streak: number; alreadyCompleted: boolean }> {
+export async function checkinHabit(habitId: string): Promise<{ streak: number; alreadyCompleted: boolean; newlyUnlocked: { title: string; description: string | null }[] }> {
   const res = await fetch(`${API_BASE}/habits/${habitId}/checkin`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

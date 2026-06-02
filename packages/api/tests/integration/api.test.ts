@@ -3,23 +3,15 @@ import request from 'supertest';
 import Database from 'better-sqlite3';
 import { createApp } from '../../src/app';
 import { SQLiteHabitRepository } from '../../src/infrastructure/repositories/sqlite-habit.repository';
+import { SQLiteAchievementRepository } from '../../src/infrastructure/repositories/sqlite-achievement.repository';
+import { getTestDatabase } from '../../src/infrastructure/database/connection';
 import { Express } from 'express';
 
 function createTestApp(): Express {
-  const db = new Database(':memory:');
-  db.exec(`
-    CREATE TABLE habits (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      description TEXT,
-      target_days INTEGER NOT NULL,
-      icon TEXT DEFAULT '🎯',
-      active INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT (datetime('now'))
-    );
-  `);
+  const db = getTestDatabase();
   const repository = new SQLiteHabitRepository(db);
-  return createApp(repository);
+  const achievementRepo = new SQLiteAchievementRepository(db);
+  return createApp({ habitRepository: repository, achievementRepository: achievementRepo });
 }
 
 describe('Health endpoint', () => {

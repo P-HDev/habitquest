@@ -136,17 +136,17 @@ src/
 | 2.8 | Streak counter (dias consecutivos)                   | ✅     |
 | 2.9 | Histórico (calendário de check-ins)                  | ⬜     |
 
-### 🔵 EPIC 3 — Sistema de Conquistas
+### 🔵 EPIC 3 — Sistema de Conquistas ✅
 
-| ID  | Feature                                                 |
-| --- | ------------------------------------------------------- |
-| 3.1 | Entity: Achievement (habit, target, progress, unlocked) |
-| 3.2 | Use Case: EvaluateAchievements (dispara após check-in)  |
-| 3.3 | Barra de progresso por hábito (45/90 = 50%)             |
-| 3.4 | Tela de conquistas (grid cards)                         |
-| 3.5 | Animação "pop" ao desbloquear                           |
-| 3.6 | Badge dourado vs cinza (locked/unlocked)                |
-| 3.7 | Som/vibração ao desbloquear                             |
+| ID  | Feature                                                 | Status |
+| --- | ------------------------------------------------------- | ------ |
+| 3.1 | Entity: Achievement (habit, target, progress, unlocked) | ✅     |
+| 3.2 | Use Case: EvaluateAchievements (dispara após check-in)  | ✅     |
+| 3.3 | Barra de progresso por hábito (45/90 = 50%)             | ✅     |
+| 3.4 | Tela de conquistas (grid cards)                         | ✅     |
+| 3.5 | Animação "pop" ao desbloquear                           | ✅     |
+| 3.6 | Badge dourado vs cinza (locked/unlocked)                | ✅     |
+| 3.7 | Som/vibração ao desbloquear                             | ✅     |
 
 ### 🟣 EPIC 4 — Push Notifications
 

@@ -52,6 +52,7 @@ function runMigrations(database: Database.Database): void {
       title TEXT NOT NULL,
       description TEXT,
       target_days INTEGER NOT NULL,
+      current_progress INTEGER DEFAULT 0,
       unlocked INTEGER DEFAULT 0,
       unlocked_at TEXT,
       FOREIGN KEY (habit_id) REFERENCES habits(id)

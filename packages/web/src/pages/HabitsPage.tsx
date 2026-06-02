@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useHabits } from '../hooks/useHabits';
 import { HabitCard } from '../components/HabitCard';
 import { CreateHabitForm } from '../components/CreateHabitForm';
+import { UnlockToast } from '../components/UnlockToast';
 
 export function HabitsPage() {
-  const { habits, loading, error, add, toggle } = useHabits();
+  const { habits, loading, error, add, toggle, newlyUnlocked, dismissUnlocked } = useHabits();
   const [showForm, setShowForm] = useState(false);
 
   const completedCount = habits.filter((h) => h.completedToday).length;
@@ -17,6 +18,13 @@ export function HabitsPage() {
 
   return (
     <div className="space-y-6">
+      {newlyUnlocked.length > 0 && (
+        <UnlockToast
+          message={newlyUnlocked[0].title}
+          onClose={dismissUnlocked}
+        />
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Hoje</h1>

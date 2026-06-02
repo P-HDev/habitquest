@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { CreateHabitUseCase } from '../../application/use-cases/create-habit.use-case.js';
 import { ListHabitsUseCase } from '../../application/use-cases/list-habits.use-case.js';
+import { SeedAchievements } from '../../application/use-cases/seed-achievements.use-case.js';
 
 export class HabitController {
   constructor(
     private readonly createHabitUseCase: CreateHabitUseCase,
     private readonly listHabitsUseCase: ListHabitsUseCase,
+    private readonly seedAchievements?: SeedAchievements,
   ) {}
 
   async create(req: Request, res: Response): Promise<void> {
@@ -23,6 +25,10 @@ export class HabitController {
         description,
         icon,
       });
+
+      if (this.seedAchievements) {
+        await this.seedAchievements.execute(habit.id, habit.name, habit.targetDays);
+      }
 
       res.status(201).json(habit);
     } catch (error) {

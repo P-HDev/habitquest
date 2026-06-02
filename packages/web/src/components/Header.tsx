@@ -12,6 +12,9 @@ export function Header() {
           <Link to="/habits" className="text-gray-300 hover:text-primary-400 transition-colors">
             Hábitos
           </Link>
+          <Link to="/achievements" className="text-gray-300 hover:text-yellow-400 transition-colors">
+            🏆 Conquistas
+          </Link>
         </nav>
       </div>
     </header>

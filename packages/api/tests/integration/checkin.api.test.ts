@@ -4,31 +4,16 @@ import Database from 'better-sqlite3';
 import { createApp } from '../../src/app';
 import { SQLiteHabitRepository } from '../../src/infrastructure/repositories/sqlite-habit.repository';
 import { SQLiteCheckinRepository } from '../../src/infrastructure/repositories/sqlite-checkin.repository';
+import { SQLiteAchievementRepository } from '../../src/infrastructure/repositories/sqlite-achievement.repository';
+import { getTestDatabase } from '../../src/infrastructure/database/connection';
 import { Express } from 'express';
 
 function createTestApp() {
-  const db = new Database(':memory:');
-  db.exec(`
-    CREATE TABLE habits (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      description TEXT,
-      target_days INTEGER NOT NULL,
-      icon TEXT DEFAULT '🎯',
-      active INTEGER DEFAULT 1,
-      created_at TEXT DEFAULT (datetime('now'))
-    );
-    CREATE TABLE checkins (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      habit_id TEXT NOT NULL,
-      date TEXT NOT NULL,
-      FOREIGN KEY (habit_id) REFERENCES habits(id),
-      UNIQUE(habit_id, date)
-    );
-  `);
+  const db = getTestDatabase();
   const habitRepo = new SQLiteHabitRepository(db);
   const checkinRepo = new SQLiteCheckinRepository(db);
-  return createApp(habitRepo, checkinRepo);
+  const achievementRepo = new SQLiteAchievementRepository(db);
+  return createApp({ habitRepository: habitRepo, checkinRepository: checkinRepo, achievementRepository: achievementRepo });
 }
 
 describe('Checkin API', () => {

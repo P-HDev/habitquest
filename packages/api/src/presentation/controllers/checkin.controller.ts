@@ -2,12 +2,14 @@ import { Request, Response } from 'express';
 import { CompleteHabitUseCase } from '../../application/use-cases/complete-habit.use-case.js';
 import { UndoHabitUseCase } from '../../application/use-cases/undo-habit.use-case.js';
 import { ListTodayHabitsUseCase } from '../../application/use-cases/list-today-habits.use-case.js';
+import { EvaluateAchievements } from '../../application/use-cases/evaluate-achievements.use-case.js';
 
 export class CheckinController {
   constructor(
     private readonly completeHabit: CompleteHabitUseCase,
     private readonly undoHabit: UndoHabitUseCase,
     private readonly listTodayHabits: ListTodayHabitsUseCase,
+    private readonly evaluateAchievements?: EvaluateAchievements,
   ) {}
 
   async complete(req: Request, res: Response): Promise<void> {
@@ -15,7 +17,17 @@ export class CheckinController {
       const { id } = req.params;
       const { date } = req.body;
       const result = await this.completeHabit.execute(id, date);
-      res.status(result.alreadyCompleted ? 200 : 201).json(result);
+
+      let newlyUnlocked: { title: string; description: string | null }[] = [];
+      if (!result.alreadyCompleted && this.evaluateAchievements) {
+        const evalResult = await this.evaluateAchievements.execute(id);
+        newlyUnlocked = evalResult.newlyUnlocked.map((a) => ({
+          title: a.title,
+          description: a.description,
+        }));
+      }
+
+      res.status(result.alreadyCompleted ? 200 : 201).json({ ...result, newlyUnlocked });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Internal error';
       const status = message === 'Habit not found' ? 404 : 500;

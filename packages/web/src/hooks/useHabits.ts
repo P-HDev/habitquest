@@ -1,10 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TodayHabit, fetchTodayHabits, createHabit, checkinHabit, uncheckHabit } from '../services/habits';
 
+export interface UnlockedAchievement {
+  title: string;
+  description: string | null;
+}
+
 export function useHabits() {
   const [habits, setHabits] = useState<TodayHabit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [newlyUnlocked, setNewlyUnlocked] = useState<UnlockedAchievement[]>([]);
 
   const load = useCallback(async () => {
     try {
@@ -41,7 +47,11 @@ export function useHabits() {
       if (currentlyCompleted) {
         await uncheckHabit(habitId);
       } else {
-        await checkinHabit(habitId);
+        const result = await checkinHabit(habitId);
+        if (result.newlyUnlocked?.length > 0) {
+          setNewlyUnlocked(result.newlyUnlocked);
+          if (navigator.vibrate) navigator.vibrate(200);
+        }
       }
       await load();
     } catch {
@@ -49,5 +59,7 @@ export function useHabits() {
     }
   };
 
-  return { habits, loading, error, reload: load, add, toggle };
+  const dismissUnlocked = () => setNewlyUnlocked([]);
+
+  return { habits, loading, error, reload: load, add, toggle, newlyUnlocked, dismissUnlocked };
 }
