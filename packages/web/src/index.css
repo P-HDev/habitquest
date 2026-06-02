@@ -5,5 +5,14 @@
 @layer base {
   body {
     @apply bg-dark-bg text-gray-100 font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
   }
 }
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+

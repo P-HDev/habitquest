@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { TodayHabit } from '../services/habits';
 
 interface HabitCardProps {
@@ -17,8 +18,10 @@ export function HabitCard({ todayHabit, onToggle }: HabitCardProps) {
   const progress = Math.min(100, Math.round((totalCompleted / habit.targetDays) * 100));
 
   return (
-    <div
+    <motion.div
       onClick={() => onToggle(habit.id, completedToday)}
+      whileTap={{ scale: 0.97 }}
+      layout
       className={`bg-dark-surface border rounded-lg p-4 flex items-center gap-4 cursor-pointer transition-all duration-200 ${
         completedToday
           ? 'border-primary-500 bg-primary-500/10 shadow-md shadow-primary-500/20'
@@ -28,9 +31,13 @@ export function HabitCard({ todayHabit, onToggle }: HabitCardProps) {
       aria-pressed={completedToday}
       aria-label={`${habit.name} - ${completedToday ? 'completado' : 'não completado'}`}
     >
-      <div className={`text-3xl transition-transform duration-200 ${completedToday ? 'scale-110' : ''}`}>
+      <motion.div
+        animate={{ scale: completedToday ? 1.1 : 1, rotate: completedToday ? [0, -10, 10, 0] : 0 }}
+        transition={{ duration: 0.3 }}
+        className="text-3xl"
+      >
         {completedToday ? '✅' : habit.icon}
-      </div>
+      </motion.div>
 
       <div className="flex-1 min-w-0">
         <h3 className={`font-semibold truncate ${completedToday ? 'text-primary-300' : 'text-gray-100'}`}>
@@ -42,9 +49,11 @@ export function HabitCard({ todayHabit, onToggle }: HabitCardProps) {
         <div className="flex items-center gap-3 mt-1.5">
           <div className="flex-1 max-w-32">
             <div className="w-full h-1.5 bg-dark-border rounded-full">
-              <div
-                className="h-full bg-primary-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+              <motion.div
+                className="h-full bg-primary-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
               />
             </div>
           </div>
@@ -53,10 +62,15 @@ export function HabitCard({ todayHabit, onToggle }: HabitCardProps) {
       </div>
 
       {streak > 0 && (
-        <div className={`text-right ${streakColor(streak)}`} aria-label={`streak ${streak} dias`}>
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className={`text-right ${streakColor(streak)}`}
+          aria-label={`streak ${streak} dias`}
+        >
           <span className="text-lg font-bold">🔥 {streak}</span>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

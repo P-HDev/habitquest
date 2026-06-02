@@ -4,6 +4,7 @@ import { createHabitRouter } from './presentation/routes/habit.routes.js';
 import { createCheckinRouter } from './presentation/routes/checkin.routes.js';
 import { createAchievementRouter } from './presentation/routes/achievement.routes.js';
 import { createNotificationRouter } from './presentation/routes/notification.routes.js';
+import { createStatsRouter } from './presentation/routes/stats.routes.js';
 import { IHabitRepository } from './domain/repositories/habit.repository.js';
 import { ICheckinRepository } from './domain/repositories/checkin.repository.js';
 import { IAchievementRepository } from './domain/repositories/achievement.repository.js';
@@ -25,6 +26,7 @@ export function createApp(deps?: AppDependencies) {
   app.use('/habits', createCheckinRouter(deps?.habitRepository, deps?.checkinRepository, deps?.achievementRepository));
   app.use('/achievements', createAchievementRouter(deps?.achievementRepository));
   app.use('/notifications', createNotificationRouter(deps?.subscriptionRepository));
+  app.use('/stats', createStatsRouter(deps?.habitRepository, deps?.checkinRepository, deps?.achievementRepository));
 
   return app;
 }

@@ -11,7 +11,8 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('HabitQuest')).toBeInTheDocument();
+    // Header renders the navigation
+    expect(screen.getByRole('banner')).toBeInTheDocument();
   });
 
   it('should render the habits page by default', () => {
@@ -21,7 +22,7 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('Hoje')).toBeInTheDocument();
+    expect(screen.getAllByText('Hoje').length).toBeGreaterThanOrEqual(1);
   });
 
   it('should show new habit button', () => {

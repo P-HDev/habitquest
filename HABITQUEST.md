@@ -167,15 +167,15 @@ src/
 | 5.3 | Lembretes 3x/dia         |
 | 5.4 | Resumo noturno           |
 
-### ⚪ EPIC 6 — UX & Polish
+### ✅ EPIC 6 — UX & Polish
 
-| ID  | Feature                                        |
-| --- | ---------------------------------------------- |
-| 6.1 | Dark mode (padrão)                             |
-| 6.2 | PWA (instalar como app)                        |
-| 6.3 | Mobile-first responsivo                        |
-| 6.4 | Dashboard stats (total conquistas, streak máx) |
-| 6.5 | Animações (framer-motion)                      |
+| ID  | Feature                                        | Status |
+| --- | ---------------------------------------------- | ------ |
+| 6.1 | Dark mode (padrão)                             | ✅     |
+| 6.2 | PWA (instalar como app)                        | ✅     |
+| 6.3 | Mobile-first responsivo                        | ✅     |
+| 6.4 | Dashboard stats (total conquistas, streak máx) | ✅     |
+| 6.5 | Animações (framer-motion)                      | ✅     |
 
 ### 🔐 EPIC 7 — Autenticação (Final)
 
