@@ -148,15 +148,15 @@ src/
 | 3.6 | Badge dourado vs cinza (locked/unlocked)                | ✅     |
 | 3.7 | Som/vibração ao desbloquear                             | ✅     |
 
-### 🟣 EPIC 4 — Push Notifications
+### 🟣 EPIC 4 — Push Notifications ✅
 
-| ID  | Feature                                    |
-| --- | ------------------------------------------ |
-| 4.1 | Service Worker registration                |
-| 4.2 | Permissão de notificação                   |
-| 4.3 | Horários configuráveis (8h, 14h, 21h)      |
-| 4.4 | "Faltam X hábitos pro dia perfeito"        |
-| 4.5 | "Faltam 3 dias pra conquista da academia!" |
+| ID  | Feature                                    | Status |
+| --- | ------------------------------------------ | ------ |
+| 4.1 | Service Worker registration                | ✅     |
+| 4.2 | Permissão de notificação                   | ✅     |
+| 4.3 | Horários configuráveis (8h, 14h, 21h)      | ✅     |
+| 4.4 | "Faltam X hábitos pro dia perfeito"        | ✅     |
+| 4.5 | "Faltam 3 dias pra conquista da academia!" | ✅     |
 
 ### 🔴 EPIC 5 — WhatsApp (Futuro)
 

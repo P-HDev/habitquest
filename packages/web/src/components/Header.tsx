@@ -15,6 +15,9 @@ export function Header() {
           <Link to="/achievements" className="text-gray-300 hover:text-yellow-400 transition-colors">
             🏆 Conquistas
           </Link>
+          <Link to="/settings" className="text-gray-300 hover:text-gray-100 transition-colors">
+            ⚙️
+          </Link>
         </nav>
       </div>
     </header>

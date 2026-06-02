@@ -57,5 +57,21 @@ function runMigrations(database: Database.Database): void {
       unlocked_at TEXT,
       FOREIGN KEY (habit_id) REFERENCES habits(id)
     );
+
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      endpoint TEXT NOT NULL UNIQUE,
+      keys_p256dh TEXT NOT NULL,
+      keys_auth TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS notification_settings (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      enabled INTEGER DEFAULT 1,
+      hours TEXT DEFAULT '08:00,14:00,21:00'
+    );
+
+    INSERT OR IGNORE INTO notification_settings (id, enabled, hours) VALUES (1, 1, '08:00,14:00,21:00');
   `);
 }

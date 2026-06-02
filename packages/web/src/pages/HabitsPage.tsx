@@ -3,6 +3,7 @@ import { useHabits } from '../hooks/useHabits';
 import { HabitCard } from '../components/HabitCard';
 import { CreateHabitForm } from '../components/CreateHabitForm';
 import { UnlockToast } from '../components/UnlockToast';
+import { NotificationBanner } from '../components/NotificationBanner';
 
 export function HabitsPage() {
   const { habits, loading, error, add, toggle, newlyUnlocked, dismissUnlocked } = useHabits();
@@ -24,6 +25,8 @@ export function HabitsPage() {
           onClose={dismissUnlocked}
         />
       )}
+
+      <NotificationBanner />
 
       <div className="flex items-center justify-between">
         <div>

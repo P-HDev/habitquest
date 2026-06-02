@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { HabitsPage } from './pages/HabitsPage';
 import { AchievementsPage } from './pages/AchievementsPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 export function App() {
   return (
@@ -9,6 +10,7 @@ export function App() {
       <Routes>
         <Route path="/habits" element={<HabitsPage />} />
         <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/habits" replace />} />
       </Routes>
     </Layout>
