@@ -12,5 +12,15 @@ services:
       - PORT=3000
     restart: unless-stopped
 
+  web:
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
 volumes:
   api-data:
