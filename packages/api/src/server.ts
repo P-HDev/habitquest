@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { createApp } from './app.js';
 import { NotificationScheduler } from './infrastructure/services/notification-scheduler.js';
 import { SQLiteSubscriptionRepository } from './infrastructure/repositories/sqlite-subscription.repository.js';
