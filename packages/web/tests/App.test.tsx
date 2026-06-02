@@ -21,7 +21,7 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('Meus Hábitos')).toBeInTheDocument();
+    expect(screen.getByText('Hoje')).toBeInTheDocument();
   });
 
   it('should show new habit button', () => {

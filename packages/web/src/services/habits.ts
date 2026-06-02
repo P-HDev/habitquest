@@ -8,11 +8,24 @@ export interface Habit {
   createdAt: string;
 }
 
+export interface TodayHabit {
+  habit: Habit;
+  completedToday: boolean;
+  streak: number;
+  totalCompleted: number;
+}
+
 const API_BASE = '/api';
 
 export async function fetchHabits(): Promise<Habit[]> {
   const res = await fetch(`${API_BASE}/habits`);
   if (!res.ok) throw new Error('Failed to fetch habits');
+  return res.json();
+}
+
+export async function fetchTodayHabits(): Promise<TodayHabit[]> {
+  const res = await fetch(`${API_BASE}/habits/today`);
+  if (!res.ok) throw new Error('Failed to fetch today habits');
   return res.json();
 }
 
@@ -31,5 +44,25 @@ export async function createHabit(data: {
     const error = await res.json();
     throw new Error(error.error || 'Failed to create habit');
   }
+  return res.json();
+}
+
+export async function checkinHabit(habitId: string): Promise<{ streak: number; alreadyCompleted: boolean }> {
+  const res = await fetch(`${API_BASE}/habits/${habitId}/checkin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) throw new Error('Failed to check in');
+  return res.json();
+}
+
+export async function uncheckHabit(habitId: string): Promise<{ removed: boolean }> {
+  const res = await fetch(`${API_BASE}/habits/${habitId}/checkin`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) throw new Error('Failed to uncheck');
   return res.json();
 }

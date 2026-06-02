@@ -124,17 +124,17 @@ src/
 
 ### 🟡 EPIC 2 — Hábitos Diários (Core)
 
-| ID  | Feature                                              |
-| --- | ---------------------------------------------------- |
-| 2.1 | Entity: Habit (name, targetDays, active, icon)       |
-| 2.2 | Value Objects: HabitName, TargetDays, Streak         |
-| 2.3 | Use Case: CreateHabit                                |
-| 2.4 | Use Case: CompleteHabitForToday                      |
-| 2.5 | Use Case: ListTodayHabits (com status check/uncheck) |
-| 2.6 | Tela principal: lista de hábitos do dia              |
-| 2.7 | Toggle check/uncheck com feedback visual             |
-| 2.8 | Streak counter (dias consecutivos)                   |
-| 2.9 | Histórico (calendário de check-ins)                  |
+| ID  | Feature                                              | Status |
+| --- | ---------------------------------------------------- | ------ |
+| 2.1 | Entity: Habit (name, targetDays, active, icon)       | ✅     |
+| 2.2 | Value Objects: HabitName, TargetDays, Streak         | ✅     |
+| 2.3 | Use Case: CreateHabit                                | ✅     |
+| 2.4 | Use Case: CompleteHabitForToday                      | ✅     |
+| 2.5 | Use Case: ListTodayHabits (com status check/uncheck) | ✅     |
+| 2.6 | Tela principal: lista de hábitos do dia              | ✅     |
+| 2.7 | Toggle check/uncheck com feedback visual             | ✅     |
+| 2.8 | Streak counter (dias consecutivos)                   | ✅     |
+| 2.9 | Histórico (calendário de check-ins)                  | ⬜     |
 
 ### 🔵 EPIC 3 — Sistema de Conquistas
 
