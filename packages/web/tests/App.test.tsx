@@ -1,37 +1,53 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from '../src/App';
 
+vi.mock('../src/services/auth', () => ({
+  login: vi.fn(),
+  register: vi.fn(),
+  refreshToken: vi.fn(),
+  getMe: vi.fn(),
+}));
+
 describe('App', () => {
-  it('should render the header with HabitQuest title', () => {
-    render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>,
-    );
-
-    // Header renders the navigation
-    expect(screen.getByRole('banner')).toBeInTheDocument();
+  beforeEach(() => {
+    localStorage.clear();
   });
 
-  it('should render the habits page by default', () => {
+  it('redirects to login when not authenticated', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/habits']}>
         <App />
       </MemoryRouter>,
     );
-
-    expect(screen.getAllByText('Hoje').length).toBeGreaterThanOrEqual(1);
+    // Should show login page
+    expect(screen.getByText('HabitQuest')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
   });
 
-  it('should show new habit button', () => {
+  it('shows habits page when authenticated', () => {
+    localStorage.setItem('accessToken', 'fake-token');
+    localStorage.setItem('user', JSON.stringify({ id: '1', email: 'a@a.com', name: 'A' }));
+
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/habits']}>
         <App />
       </MemoryRouter>,
     );
-
+    // Should show habits page (has "Novo Hábito" button)
     expect(screen.getByText('Novo Hábito')).toBeInTheDocument();
+  });
+
+  it('shows header with nav when authenticated', () => {
+    localStorage.setItem('accessToken', 'fake-token');
+    localStorage.setItem('user', JSON.stringify({ id: '1', email: 'a@a.com', name: 'A' }));
+
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('banner')).toBeInTheDocument();
   });
 });

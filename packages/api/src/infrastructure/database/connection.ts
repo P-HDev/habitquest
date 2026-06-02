@@ -28,6 +28,14 @@ export function getTestDatabase(): Database.Database {
 
 function runMigrations(database: Database.Database): void {
   database.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS habits (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -35,6 +43,7 @@ function runMigrations(database: Database.Database): void {
       target_days INTEGER NOT NULL,
       icon TEXT DEFAULT '🎯',
       active INTEGER DEFAULT 1,
+      user_id TEXT,
       created_at TEXT DEFAULT (datetime('now'))
     );
 

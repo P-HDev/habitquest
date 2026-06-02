@@ -177,16 +177,16 @@ src/
 | 6.4 | Dashboard stats (total conquistas, streak máx) | ✅     |
 | 6.5 | Animações (framer-motion)                      | ✅     |
 
-### 🔐 EPIC 7 — Autenticação (Final)
+### ✅ EPIC 7 — Autenticação (Final)
 
-| ID  | Feature                                  |
-| --- | ---------------------------------------- |
-| 7.1 | Entity: User (email, passwordHash, name) |
-| 7.2 | Registro + Login (JWT)                   |
-| 7.3 | Middleware auth                          |
-| 7.4 | Tela login/registro                      |
-| 7.5 | Hábitos vinculados a user_id             |
-| 7.6 | Refresh token + logout                   |
+| ID  | Feature                                  | Status |
+| --- | ---------------------------------------- | ------ |
+| 7.1 | Entity: User (email, passwordHash, name) | ✅     |
+| 7.2 | Registro + Login (JWT)                   | ✅     |
+| 7.3 | Middleware auth                          | ✅     |
+| 7.4 | Tela login/registro                      | ✅     |
+| 7.5 | Hábitos vinculados a user_id             | ✅     |
+| 7.6 | Refresh token + logout                   | ✅     |
 
 ### 🖼️ EPIC 8 — Gerador de Wallpaper de Conquistas
 

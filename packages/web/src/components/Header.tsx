@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Header() {
   const { pathname } = useLocation();
+  const { user, logout } = useAuth();
 
   const linkClass = (path: string) =>
     `transition-colors text-sm sm:text-base ${
@@ -28,6 +30,15 @@ export function Header() {
           <Link to="/settings" className={linkClass('/settings')}>
             ⚙️
           </Link>
+          {user && (
+            <button
+              onClick={logout}
+              className="text-gray-500 hover:text-red-400 transition-colors text-sm"
+              title="Sair"
+            >
+              🚪
+            </button>
+          )}
         </nav>
       </div>
     </header>
