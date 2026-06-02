@@ -188,6 +188,22 @@ src/
 | 7.5 | Hábitos vinculados a user_id             |
 | 7.6 | Refresh token + logout                   |
 
+### 🖼️ EPIC 8 — Gerador de Wallpaper de Conquistas
+
+| ID  | Feature                                                             |
+| --- | ------------------------------------------------------------------- |
+| 8.1 | Página `/wallpaper` com grid de conquistas selecionáveis            |
+| 8.2 | Escolha de orientação: Vertical (1080×1920) / Horizontal (1920×1080)|
+| 8.3 | Canvas renderer (gradient bg + achievements em grid + progress bars)|
+| 8.4 | Preview ao vivo do wallpaper conforme seleciona                     |
+| 8.5 | Download como PNG (botão "Baixar Wallpaper")                        |
+| 8.6 | Temas de cor: Dark (preto/dourado), Light (branco/azul), Neon       |
+| 8.7 | Título customizável (frase motivacional no topo)                    |
+| 8.8 | Stats no rodapé (X/Y desbloqueadas, streak máximo)                  |
+
+> **Tech:** Canvas API (100% client-side, zero dependências). Gera imagem para o usuário
+> usar como fundo de tela no celular ou computador — lembrete visual das metas.
+
 ---
 
 ## Sprints (XP - Small Releases)
