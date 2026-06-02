@@ -32,7 +32,10 @@ function runMigrations(database: Database.Database): void {
       id TEXT PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
       name TEXT NOT NULL,
-      password_hash TEXT NOT NULL,
+      password_hash TEXT,
+      auth_provider TEXT DEFAULT 'local',
+      google_id TEXT,
+      avatar_url TEXT,
       created_at TEXT DEFAULT (datetime('now'))
     );
 

@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 export function LoginPage() {
   const [isRegister, setIsRegister] = useState(false);
@@ -9,7 +10,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { login, register } = useAuth();
+  const { login, register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -31,6 +32,23 @@ export function LoginPage() {
     }
   };
 
+  const handleGoogleSuccess = async (response: CredentialResponse) => {
+    if (!response.credential) {
+      setError('Erro ao obter credenciais do Google');
+      return;
+    }
+    setError('');
+    setSubmitting(true);
+    try {
+      await googleLogin(response.credential);
+      navigate('/habits');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen min-h-[100dvh] bg-dark-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-6">
@@ -40,6 +58,24 @@ export function LoginPage() {
           <p className="text-gray-400 text-sm mt-1">
             {isRegister ? 'Crie sua conta' : 'Entre na sua conta'}
           </p>
+        </div>
+
+        {/* Google Login Button */}
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Erro ao fazer login com Google')}
+            theme="filled_black"
+            size="large"
+            width="100%"
+            text={isRegister ? 'signup_with' : 'signin_with'}
+          />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-dark-border" />
+          <span className="text-gray-500 text-xs">ou</span>
+          <div className="flex-1 h-px bg-dark-border" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

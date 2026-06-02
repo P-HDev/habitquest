@@ -3,7 +3,7 @@ const API_BASE = '/api';
 interface AuthTokens {
   accessToken: string;
   refreshToken: string;
-  user: { id: string; email: string; name: string };
+  user: { id: string; email: string; name: string; avatarUrl?: string };
 }
 
 export async function register(email: string, name: string, password: string): Promise<AuthTokens> {
@@ -28,6 +28,19 @@ export async function login(email: string, password: string): Promise<AuthTokens
   if (!res.ok) {
     const data = await res.json();
     throw new Error(data.error || 'Erro ao fazer login');
+  }
+  return res.json();
+}
+
+export async function googleLogin(idToken: string): Promise<AuthTokens> {
+  const res = await fetch(`${API_BASE}/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || 'Erro ao fazer login com Google');
   }
   return res.json();
 }

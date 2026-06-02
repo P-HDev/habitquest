@@ -327,6 +327,22 @@ src/
 > **Princípio:** Menor superfície de ataque. Menor custo. Máxima resiliência.
 > Plataforma sugerida: **Vercel (front) + Railway (back) + Neon.tech (Postgres) + Cloudflare (CDN/DDoS)**
 
+### ✅ EPIC 16 — Login com Google (OAuth2)
+
+| ID    | Feature                                                                      | Status |
+| ----- | ---------------------------------------------------------------------------- | ------ |
+| 16.1  | Backend: rota POST /auth/google (recebe Google ID token)                    | ✅     |
+| 16.2  | Backend: verificar token com Google API (google-auth-library)                | ✅     |
+| 16.3  | Backend: criar/vincular user automaticamente (email do Google)               | ✅     |
+| 16.4  | Backend: retornar JWT access+refresh token (mesmo fluxo do login normal)     | ✅     |
+| 16.5  | Frontend: botão "Entrar com Google" na tela de login                         | ✅     |
+| 16.6  | Frontend: Google Sign-In SDK (@react-oauth/google)                           | ✅     |
+| 16.7  | Frontend: fluxo seamless (1 clique → logado)                                 | ✅     |
+| 16.8  | Vincular conta existente: se email já existe, faz merge (não duplica)        | ✅     |
+
+> **Tech:** google-auth-library (backend) + @react-oauth/google (frontend).
+> Não precisa de senha quando vem pelo Google. O user ganha `authProvider: 'google'` no banco.
+
 ---
 
 ## Roadmap de Lançamento

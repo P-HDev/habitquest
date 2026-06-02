@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { IUserRepository } from '../../domain/repositories/user.repository.js';
 import { RegisterUser } from '../../application/use-cases/register-user.js';
 import { LoginUser, RefreshToken } from '../../application/use-cases/login-user.js';
+import { GoogleAuth } from '../../application/use-cases/google-auth.js';
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware.js';
 
 export function createAuthRouter(userRepo?: IUserRepository): Router {
@@ -87,6 +88,26 @@ export function createAuthRouter(userRepo?: IUserRepository): Router {
     }
   });
 
+  router.post('/google', async (req: Request, res: Response) => {
+    try {
+      const { idToken } = req.body;
+      if (!idToken) {
+        res.status(400).json({ error: 'Google ID token obrigatório' });
+        return;
+      }
+
+      const useCase = new GoogleAuth(getUserRepo());
+      const result = await useCase.execute(idToken);
+      res.json(result);
+    } catch (err: any) {
+      if (err.message === 'INVALID_GOOGLE_TOKEN') {
+        res.status(401).json({ error: 'Token do Google inválido' });
+        return;
+      }
+      res.status(500).json({ error: 'Erro interno' });
+    }
+  });
+
   router.get('/me', authMiddleware, (req: AuthRequest, res: Response) => {
     const repo = getUserRepo();
     const user = repo.findById(req.userId!);
@@ -94,7 +115,7 @@ export function createAuthRouter(userRepo?: IUserRepository): Router {
       res.status(404).json({ error: 'Usuário não encontrado' });
       return;
     }
-    res.json({ id: user.id, email: user.email, name: user.name });
+    res.json({ id: user.id, email: user.email, name: user.name, avatarUrl: user.avatarUrl });
   });
 
   return router;

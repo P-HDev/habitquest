@@ -27,6 +27,7 @@ export class RegisterUser {
       email: input.email.toLowerCase().trim(),
       name: input.name.trim(),
       passwordHash: bcrypt.hashSync(input.password, 10),
+      authProvider: 'local',
       createdAt: new Date().toISOString(),
     };
 

@@ -6,8 +6,14 @@ import { App } from '../src/App';
 vi.mock('../src/services/auth', () => ({
   login: vi.fn(),
   register: vi.fn(),
+  googleLogin: vi.fn(),
   refreshToken: vi.fn(),
   getMe: vi.fn(),
+}));
+
+vi.mock('@react-oauth/google', () => ({
+  GoogleLogin: () => <button data-testid="google-btn">Google Login</button>,
+  GoogleOAuthProvider: ({ children }: any) => <>{children}</>,
 }));
 
 describe('App', () => {
