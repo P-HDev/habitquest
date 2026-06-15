@@ -12,8 +12,8 @@ vi.mock('../src/services/auth', () => ({
 }));
 
 vi.mock('@react-oauth/google', () => ({
-  GoogleLogin: () => <button data-testid="google-btn">Google Login</button>,
   GoogleOAuthProvider: ({ children }: any) => <>{children}</>,
+  useGoogleLogin: () => () => {},
 }));
 
 describe('App', () => {
@@ -35,6 +35,7 @@ describe('App', () => {
   it('shows habits page when authenticated', () => {
     localStorage.setItem('accessToken', 'fake-token');
     localStorage.setItem('user', JSON.stringify({ id: '1', email: 'a@a.com', name: 'A' }));
+    localStorage.setItem('onboarding_done', 'true');
 
     render(
       <MemoryRouter initialEntries={['/habits']}>
@@ -48,6 +49,7 @@ describe('App', () => {
   it('shows header with nav when authenticated', () => {
     localStorage.setItem('accessToken', 'fake-token');
     localStorage.setItem('user', JSON.stringify({ id: '1', email: 'a@a.com', name: 'A' }));
+    localStorage.setItem('onboarding_done', 'true');
 
     render(
       <MemoryRouter>

@@ -13,12 +13,11 @@ vi.mock('../src/services/auth', () => ({
 }));
 
 vi.mock('@react-oauth/google', () => ({
-  GoogleLogin: ({ onSuccess }: any) => (
-    <button onClick={() => onSuccess({ credential: 'mock-token' })} data-testid="google-btn">
-      Google Login
-    </button>
-  ),
   GoogleOAuthProvider: ({ children }: any) => <>{children}</>,
+  useGoogleLogin:
+    ({ onSuccess }: any) =>
+    () =>
+      onSuccess({ access_token: 'mock-access-token' }),
 }));
 
 import * as authService from '../src/services/auth';
@@ -32,7 +31,7 @@ function renderLogin() {
       <AuthProvider>
         <LoginPage />
       </AuthProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -107,7 +106,7 @@ describe('LoginPage', () => {
 
   it('renders Google login button', () => {
     renderLogin();
-    expect(screen.getByTestId('google-btn')).toBeDefined();
+    expect(screen.getByText('Continuar com Google')).toBeDefined();
   });
 
   it('calls googleLogin when Google button clicked', async () => {
@@ -118,10 +117,10 @@ describe('LoginPage', () => {
     });
     renderLogin();
 
-    fireEvent.click(screen.getByTestId('google-btn'));
+    fireEvent.click(screen.getByText('Continuar com Google'));
 
     await waitFor(() => {
-      expect(mockGoogleLogin).toHaveBeenCalledWith('mock-token');
+      expect(mockGoogleLogin).toHaveBeenCalledWith('mock-access-token');
     });
   });
 });
