@@ -1,6 +1,7 @@
 # --- API ---
 FROM node:20-alpine AS api-build
 WORKDIR /app
+ENV HUSKY=0
 COPY package.json package-lock.json* ./
 COPY packages/api/package.json ./packages/api/
 RUN npm ci --workspace=packages/api --legacy-peer-deps
