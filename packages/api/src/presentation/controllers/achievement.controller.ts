@@ -17,12 +17,12 @@ export class AchievementController {
         progressPercent: a.progressPercent(),
         unlocked: a.unlocked,
         unlockedAt: a.unlockedAt?.toISOString() || null,
-      }))
+      })),
     );
   }
 
   async listByHabit(req: Request, res: Response): Promise<void> {
-    const { id } = req.params;
+    const id = req.params['id'] as string;
     const achievements = await this.achievementRepository.findByHabit(id);
     res.json(
       achievements.map((a) => ({
@@ -35,7 +35,7 @@ export class AchievementController {
         progressPercent: a.progressPercent(),
         unlocked: a.unlocked,
         unlockedAt: a.unlockedAt?.toISOString() || null,
-      }))
+      })),
     );
   }
 }

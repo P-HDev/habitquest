@@ -8,7 +8,7 @@ export interface StatsDTO {
   achievementPercent: number;
 }
 
-const API_BASE = '/api';
+import { API_BASE } from './config';
 
 export async function fetchStats(): Promise<StatsDTO> {
   const res = await fetch(`${API_BASE}/stats`);

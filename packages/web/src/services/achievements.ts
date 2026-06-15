@@ -10,7 +10,7 @@ export interface AchievementDTO {
   unlockedAt: string | null;
 }
 
-const API_BASE = '/api';
+import { API_BASE } from './config';
 
 export async function fetchAchievements(): Promise<AchievementDTO[]> {
   const res = await fetch(`${API_BASE}/achievements`);

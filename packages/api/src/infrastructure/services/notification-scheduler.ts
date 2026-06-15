@@ -7,7 +7,7 @@ import { IAchievementRepository } from '../../domain/repositories/achievement.re
 import { NotificationMessageBuilder } from './notification-message.service.js';
 
 export class NotificationScheduler {
-  private jobs: cron.ScheduledTask[] = [];
+  private jobs: ReturnType<typeof cron.schedule>[] = [];
   private messageBuilder: NotificationMessageBuilder;
 
   constructor(
@@ -70,10 +70,7 @@ export class NotificationScheduler {
 
       for (const sub of subscriptions) {
         try {
-          await webpush.sendNotification(
-            { endpoint: sub.endpoint, keys: sub.keys },
-            payload,
-          );
+          await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, payload);
         } catch (err: any) {
           if (err.statusCode === 404 || err.statusCode === 410) {
             await this.subscriptionRepo.remove(sub.endpoint);

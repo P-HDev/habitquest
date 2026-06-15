@@ -14,13 +14,13 @@ export class CheckinController {
 
   async complete(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params['id'] as string;
       const { date } = req.body;
       const result = await this.completeHabit.execute(id, date);
 
       let newlyUnlocked: { title: string; description: string | null }[] = [];
       if (!result.alreadyCompleted && this.evaluateAchievements) {
-        const evalResult = await this.evaluateAchievements.execute(id);
+        const evalResult = await this.evaluateAchievements.execute(id as string);
         newlyUnlocked = evalResult.newlyUnlocked.map((a) => ({
           title: a.title,
           description: a.description,
@@ -37,7 +37,7 @@ export class CheckinController {
 
   async undo(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params['id'] as string;
       const { date } = req.body;
       const result = await this.undoHabit.execute(id, date);
       res.status(result.removed ? 200 : 404).json(result);

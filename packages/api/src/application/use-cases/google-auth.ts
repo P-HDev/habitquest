@@ -1,8 +1,6 @@
 import { randomUUID } from 'crypto';
 import jwt from 'jsonwebtoken';
-import { OAuth2Client } from 'google-auth-library';
 import { IUserRepository } from '../../domain/repositories/user.repository.js';
-import { User } from '../../domain/entities/user.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'habitquest-secret-dev';
 const ACCESS_TOKEN_EXPIRY = '2h';
@@ -54,8 +52,12 @@ export class GoogleAuth {
       this.userRepo.create(user);
     }
 
-    const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRY });
-    const refreshToken = jwt.sign({ userId: user.id, type: 'refresh' }, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRY });
+    const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
+      expiresIn: ACCESS_TOKEN_EXPIRY,
+    });
+    const refreshToken = jwt.sign({ userId: user.id, type: 'refresh' }, JWT_SECRET, {
+      expiresIn: REFRESH_TOKEN_EXPIRY,
+    });
 
     return {
       accessToken,
@@ -70,10 +72,10 @@ export class GoogleAuth {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (!res.ok) throw new Error('Failed to fetch user info');
-      return await res.json();
+      return (await res.json()) as GoogleUserInfo;
     } catch (err) {
       console.error('[GoogleAuth] Failed to fetch user info:', err);
-      throw new Error('INVALID_GOOGLE_TOKEN');
+      throw new Error('INVALID_GOOGLE_TOKEN', { cause: err });
     }
   }
 }

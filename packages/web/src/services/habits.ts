@@ -15,7 +15,7 @@ export interface TodayHabit {
   totalCompleted: number;
 }
 
-const API_BASE = '/api';
+import { API_BASE } from './config';
 
 export async function fetchHabits(): Promise<Habit[]> {
   const res = await fetch(`${API_BASE}/habits`);
@@ -47,7 +47,13 @@ export async function createHabit(data: {
   return res.json();
 }
 
-export async function checkinHabit(habitId: string): Promise<{ streak: number; alreadyCompleted: boolean; newlyUnlocked: { title: string; description: string | null }[] }> {
+export async function checkinHabit(
+  habitId: string,
+): Promise<{
+  streak: number;
+  alreadyCompleted: boolean;
+  newlyUnlocked: { title: string; description: string | null }[];
+}> {
   const res = await fetch(`${API_BASE}/habits/${habitId}/checkin`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

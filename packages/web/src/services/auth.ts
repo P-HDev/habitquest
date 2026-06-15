@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+import { API_BASE } from './config';
 
 interface AuthTokens {
   accessToken: string;
@@ -57,7 +57,9 @@ export async function refreshToken(token: string): Promise<AuthTokens> {
   return res.json();
 }
 
-export async function getMe(accessToken: string): Promise<{ id: string; email: string; name: string }> {
+export async function getMe(
+  accessToken: string,
+): Promise<{ id: string; email: string; name: string }> {
   const res = await fetch(`${API_BASE}/auth/me`, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });

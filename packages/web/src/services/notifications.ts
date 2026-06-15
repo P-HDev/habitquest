@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+import { API_BASE } from './config';
 
 export async function getVapidPublicKey(): Promise<string> {
   const res = await fetch(`${API_BASE}/notifications/vapid-public-key`);

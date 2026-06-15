@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { getVapidPublicKey, subscribeToPush, urlBase64ToUint8Array } from '../services/notifications';
+import {
+  getVapidPublicKey,
+  subscribeToPush,
+  urlBase64ToUint8Array,
+} from '../services/notifications';
 
 type PermissionState = 'default' | 'granted' | 'denied' | 'unsupported';
 
@@ -31,7 +35,7 @@ export function NotificationBanner() {
 
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidKey),
+          applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as ArrayBuffer,
         });
 
         await subscribeToPush(subscription);
@@ -44,7 +48,10 @@ export function NotificationBanner() {
   };
 
   return (
-    <div className="bg-primary-900/50 border border-primary-700 rounded-lg p-4 flex items-center justify-between" data-testid="notification-banner">
+    <div
+      className="bg-primary-900/50 border border-primary-700 rounded-lg p-4 flex items-center justify-between"
+      data-testid="notification-banner"
+    >
       <div className="flex items-center gap-3">
         <span className="text-2xl">🔔</span>
         <div>

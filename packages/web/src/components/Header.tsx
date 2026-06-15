@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export function Header() {
   const { pathname } = useLocation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const linkClass = (path: string) =>
     `transition-colors text-sm sm:text-base ${
@@ -11,7 +11,12 @@ export function Header() {
     }`;
 
   const initials = user?.name
-    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
     : '?';
 
   return (
@@ -36,7 +41,11 @@ export function Header() {
           </Link>
           <Link to="/profile" className="ml-1">
             {user?.avatarUrl ? (
-              <img src={user.avatarUrl} alt="" className="w-7 h-7 rounded-full border border-dark-border" />
+              <img
+                src={user.avatarUrl}
+                alt=""
+                className="w-7 h-7 rounded-full border border-dark-border"
+              />
             ) : (
               <div className="w-7 h-7 rounded-full bg-primary-500/30 border border-primary-400/50 flex items-center justify-center text-xs font-bold text-primary-300">
                 {initials}

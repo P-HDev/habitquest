@@ -1,0 +1,20 @@
+app = "habitquest-api"
+primary_region = "gru"
+
+[build]
+  dockerfile = "packages/api/Dockerfile"
+
+[env]
+  PORT = "3000"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[mounts]]
+  source = "habitquest_data"
+  destination = "/app/data"
