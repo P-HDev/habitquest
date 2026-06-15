@@ -3,7 +3,7 @@ FROM node:20-alpine AS api-build
 WORKDIR /app
 COPY package.json package-lock.json* ./
 COPY packages/api/package.json ./packages/api/
-RUN npm ci --workspace=packages/api
+RUN npm ci --workspace=packages/api --legacy-peer-deps
 COPY packages/api ./packages/api
 RUN npm run build -w packages/api
 
