@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HabitQuest — Guia de Desenvolvimento</title>
+<style>
+:root{
+  --bg:#0f172a; --surface:#1e293b; --border:#334155; --text:#f1f5f9; --muted:#94a3b8;
+  --primary:#22c55e; --primary-dark:#16a34a; --gold:#facc15; --danger:#f87171;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:104px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--font)}
+a{color:var(--primary)}
+.banner{background:var(--gold);color:#1e293b;text-align:center;font-weight:600;font-size:.85rem;padding:.3rem}
+nav{position:sticky;top:0;z-index:10;background:rgba(15,23,42,.95);border-bottom:1px solid var(--border);
+  display:flex;gap:.25rem;overflow-x:auto;padding:.5rem 1rem}
+nav a{color:var(--muted);text-decoration:none;white-space:nowrap;padding:.25rem .7rem;border-radius:999px;font-size:.9rem}
+nav a:hover{background:var(--surface);color:var(--text)}
+main{max-width:1000px;margin:0 auto;padding:0 1rem 4rem}
+section{padding-top:2.5rem}
+h1{font-size:2.6rem;margin:.2rem 0}
+h2{font-size:1.6rem;border-bottom:2px solid var(--primary);padding-bottom:.3rem}
+h3{font-size:1.1rem;margin-top:1.6rem;color:var(--gold)}
+.hero{padding:3rem 0 1rem}
+.hero p{font-size:1.2rem;color:var(--muted);max-width:42em}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.3rem .9rem;font-size:.9rem}
+.chip b{color:var(--primary)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;counter-reset:c}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;counter-increment:c}
+.card::before{content:counter(c);display:inline-grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:50%;
+  background:var(--primary);color:#052e16;font-weight:700;margin-bottom:.4rem}
+.card h3{margin:.2rem 0;color:var(--text)}
+.card p{margin:.3rem 0;color:var(--muted);font-size:.95rem}
+.scroll{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:.45rem .7rem;text-align:left;vertical-align:top}
+th{background:var(--surface);color:var(--primary)}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface);padding:.1em .35em;border-radius:4px}
+pre{background:#020617;border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;overflow-x:auto}
+pre code{background:none;padding:0}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.can,.cannot{border-radius:12px;padding:.2rem 1.2rem;border:1px solid var(--border)}
+.can{border-left:4px solid var(--primary)} .cannot{border-left:4px solid var(--danger)}
+.warn{border-left:4px solid var(--gold);background:var(--surface);padding:.6rem 1rem;border-radius:8px;margin:1rem 0}
+.tbd{color:var(--gold);font-weight:600}
+.hl{animation:hl 2s ease-out}
+@keyframes hl{from{outline:3px solid var(--gold);background:rgba(250,204,21,.18)}to{outline:3px solid transparent}}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);padding-top:1rem;margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="banner">Documento interno do time — não publicar</div>
+<nav aria-label="Seções">
+  <a href="#inicio">Início</a><a href="#em-30-segundos">30 segundos</a><a href="#dominio">Domínio</a>
+  <a href="#arquitetura">Arquitetura</a><a href="#regras">Regras</a><a href="#pode-nao-pode">Pode / Não pode</a>
+  <a href="#como-fazer">Como fazer</a><a href="#estado">Estado</a><a href="#fontes">Fontes</a>
+</nav>
+<main>
+
+<section id="inicio" class="hero">
+  <h1>🏆 HabitQuest</h1>
+  <p>PWA de hábitos diários com conquistas no estilo Xbox: o usuário faz check-in todo dia e desbloqueia marcos (7, 21, 30… dias) por hábito.
+  Fonte: <code>HABITQUEST.md</code>.</p>
+  <div class="chips">
+    <span class="chip"><b>Stack</b> React 18 + Vite + Tailwind · Express + TypeScript · SQLite</span>
+    <span class="chip"><b>Módulos</b> 2 pacotes npm (<code>packages/api</code>, <code>packages/web</code>)</span>
+    <span class="chip"><b>Status</b> MVP funcional; deploy de produção <span class="tbd">a definir</span> (ver <a href="#estado">Estado</a>)</span>
+    <span class="chip"><b>Node</b> 20 nas imagens (<code>packages/api/Dockerfile</code>)</span>
+    <span class="chip"><b>Método</b> XP + TDD + DDD</span>
+  </div>
+</section>
+
+<section id="em-30-segundos">
+  <h2>O projeto em 30 segundos</h2>
+  <div class="cards">
+    <div class="card"><h3>Cria o hábito</h3><p>Nome, meta em dias (1–365) e ícone. Ao criar, a API gera as conquistas-marco do hábito.</p></div>
+    <div class="card"><h3>Check-in do dia</h3><p><code>POST /habits/:id/checkin</code>: no máximo 1 por hábito por dia; desfazer com <code>DELETE</code>.</p></div>
+    <div class="card"><h3>Conquistas avaliam</h3><p>Após o check-in, <code>EvaluateAchievements</code> recalcula o progresso e desbloqueia o que atingiu a meta.</p></div>
+    <div class="card"><h3>Lembretes</h3><p>Um agendador (node-cron) manda Web Push às 08:00, 14:00 e 21:00 por padrão.</p></div>
+  </div>
+</section>
+
+<section id="dominio">
+  <h2>Glossário do domínio</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Termo</th><th>Significado</th><th>Onde vive</th></tr></thead>
+    <tbody>
+    <tr id="termo-habito"><td>Hábito</td><td>Meta recorrente do usuário (nome ≤100, meta de dias, ícone, ativo).</td><td><code>packages/api/src/domain/entities/habit.ts</code></td></tr>
+    <tr id="termo-checkin"><td>Check-in</td><td>Registro "feito" de um hábito em uma data (<code>YYYY-MM-DD</code>). Único por hábito+data.</td><td><code>packages/api/src/application/use-cases/complete-habit.use-case.ts</code></td></tr>
+    <tr id="termo-streak"><td>Streak</td><td>Dias consecutivos terminando hoje (ou ontem, com <code>includeYesterday</code>). É bônus visual: não afeta conquistas.</td><td><code>packages/api/src/domain/value-objects/streak.ts</code></td></tr>
+    <tr id="termo-conquista"><td>Conquista (Achievement)</td><td>Marco de um hábito: <code>targetDays</code>, progresso e estado bloqueada → desbloqueada (<code>unlock()</code> é idempotente).</td><td><code>packages/api/src/domain/entities/achievement.ts</code></td></tr>
+    <tr id="termo-marco"><td>Marco</td><td>Os alvos 7, 21, 30, 60, 90, 180, 365 (<code>MILESTONE_TARGETS</code>), filtrados pelos que cabem na meta do hábito.</td><td><code>packages/api/src/domain/entities/achievement.ts</code></td></tr>
+    <tr id="termo-dia-perfeito"><td>Dia perfeito</td><td>Todos os hábitos ativos concluídos no dia (definição em <code>HABITQUEST.md</code>; usada nas mensagens de push).</td><td><code>packages/api/src/infrastructure/services/notification-message.service.ts</code></td></tr>
+    <tr id="termo-provider"><td>authProvider</td><td><code>local</code> (senha) ou <code>google</code>. Conta só-Google não loga com senha.</td><td><code>packages/api/src/application/use-cases/login-user.ts</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="arquitetura">
+  <h2>Mapa</h2>
+  <p>API em DDD em camadas; a web é uma SPA que fala com a API por HTTP (<code>packages/web/src/services/config.ts</code>).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Camada / módulo</th><th>Papel</th><th>Pasta</th></tr></thead>
+    <tbody>
+    <tr><td>domain</td><td>Entidades, value objects, interfaces de repositório. Sem I/O.</td><td><code>packages/api/src/domain/</code></td></tr>
+    <tr><td>application</td><td>Use cases (orquestração).</td><td><code>packages/api/src/application/use-cases/</code></td></tr>
+    <tr><td>infrastructure</td><td>Repositórios SQLite, migrations, scheduler de push.</td><td><code>packages/api/src/infrastructure/</code></td></tr>
+    <tr><td>presentation</td><td>Rotas Express, controllers, middleware de auth.</td><td><code>packages/api/src/presentation/</code></td></tr>
+    <tr><td>web</td><td>Páginas, componentes, hooks, services (fetch), PWA (<code>packages/web/public/sw.js</code>).</td><td><code>packages/web/src/</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>Composição: <code>packages/api/src/app.ts</code> (<code>createApp(deps)</code> aceita repositórios injetáveis, usado nos testes) e <code>packages/api/src/server.ts</code> (sobe HTTP e o scheduler).</p>
+  <h3>Dependências externas</h3>
+  <ul>
+    <li><b>Google OAuth</b> (<code>google-auth-library</code> na API, <code>@react-oauth/google</code> na web): variáveis em <code>packages/api/.env.example</code> e <code>packages/web/.env.example</code>.</li>
+    <li><b>Web Push / VAPID</b>: sem chaves VAPID o scheduler se desliga e só loga o aviso (<code>packages/api/src/infrastructure/services/notification-scheduler.ts</code>).</li>
+  </ul>
+  <h3>Invariantes</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Invariante</th><th>Por quê</th><th>Fonte</th></tr></thead>
+    <tbody>
+    <tr id="inv-checkin-unico"><td>Um check-in por hábito por dia.</td><td>Conquista conta check-ins; duplicar inflaria o progresso.</td><td><code>packages/api/src/infrastructure/database/connection.ts</code> (<code>UNIQUE(habit_id, date)</code>)</td></tr>
+    <tr id="inv-conquista-contagem"><td>Conquista usa total de check-ins, não dias consecutivos.</td><td>Streak é só bônus visual.</td><td><code>packages/api/src/application/use-cases/evaluate-achievements.use-case.ts</code></td></tr>
+    <tr id="inv-datas-utc"><td>Datas de check-in são calculadas em UTC.</td><td>Evita divergência de fuso entre streak e check-in.</td><td><code>packages/api/src/domain/value-objects/streak.ts</code></td></tr>
+    <tr id="inv-dominio-puro"><td><code>packages/api/src/domain/</code> não importa infraestrutura.</td><td>Use cases dependem de abstrações (SOLID-D).</td><td><code>HABITQUEST.md</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="warn" id="aviso-auth"><b>Atenção (lacuna observada no código):</b> só <code>GET /auth/me</code> usa <code>authMiddleware</code>. As rotas <code>/habits</code>, <code>/achievements</code>, <code>/stats</code> e <code>/notifications</code> não exigem token nem filtram por usuário
+  (<code>packages/api/src/app.ts</code>, <code>packages/api/src/presentation/controllers/habit.controller.ts</code>), embora <code>HABITQUEST.md</code> marque 7.5 "hábitos vinculados a user_id" como ✅. Tratar como <span class="tbd">a definir</span> antes de expor dados reais.</div>
+</section>
+
+<section id="regras">
+  <h2>Regras e números</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Item</th><th>Valor / Limite</th><th>Por quê</th><th>Fonte</th></tr></thead>
+    <tbody>
+    <tr id="regra-nome"><td>Nome do hábito</td><td>1–100 caracteres</td><td>Validação do value object</td><td><code>packages/api/src/domain/value-objects/habit-name.ts</code></td></tr>
+    <tr id="regra-meta"><td>Meta (targetDays)</td><td>1–365</td><td>Validação do value object</td><td><code>packages/api/src/domain/value-objects/target-days.ts</code></td></tr>
+    <tr id="regra-marcos"><td>Marcos de conquista</td><td>7, 21, 30, 60, 90, 180, 365 (≤ meta)</td><td>Gerados ao criar o hábito</td><td><code>packages/api/src/domain/entities/achievement.ts</code></td></tr>
+    <tr id="regra-senha"><td>Senha mínima</td><td>6 caracteres; hash bcrypt (10 rounds)</td><td>Validação no registro</td><td><code>packages/api/src/application/use-cases/register-user.ts</code></td></tr>
+    <tr id="regra-jwt"><td>Tokens JWT</td><td>access 2h · refresh 7d</td><td>Constantes dos use cases de login</td><td><code>packages/api/src/application/use-cases/login-user.ts</code></td></tr>
+    <tr id="regra-push"><td>Horários de push padrão</td><td>08:00, 14:00, 21:00</td><td>Padrão quando não há configuração salva</td><td><code>packages/api/src/infrastructure/repositories/sqlite-subscription.repository.ts</code></td></tr>
+    <tr id="regra-cobertura"><td>Cobertura mínima</td><td>80% domínio · 70% geral</td><td>Quality gate de TDD</td><td><code>HABITQUEST.md</code></td></tr>
+    <tr id="regra-commit"><td>Mensagem de commit</td><td>Conventional Commits, cabeçalho ≤ 72</td><td>commitlint no hook <code>commit-msg</code></td><td><code>commitlint.config.mjs</code></td></tr>
+    <tr id="regra-cors"><td>CORS</td><td><code>FRONTEND_URL</code> ou localhost:5173/4173</td><td>Origem permitida da web</td><td><code>packages/api/src/app.ts</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="warn" id="aviso-marcos"><b>Divergência:</b> <code>HABITQUEST.md</code> diz marcos de 25/50/75/100%; o código usa os alvos fixos acima. <b>Código vence</b>; <code>HABITQUEST.md</code> deve ser corrigido.</div>
+</section>
+
+<section id="pode-nao-pode">
+  <h2>Pode / Não pode</h2>
+  <div class="two">
+    <div class="can"><h3>Pode</h3><ul>
+      <li>Criar use case novo em <code>packages/api/src/application/use-cases/</code> com teste antes.</li>
+      <li>Injetar repositório fake via <code>createApp(deps)</code> nos testes.</li>
+      <li>Usar <code>getTestDatabase()</code> (SQLite em memória) em teste de integração.</li>
+      <li>Documentar variável nova nos <code>.env.example</code>.</li>
+    </ul></div>
+    <div class="cannot"><h3>Não pode</h3><ul>
+      <li>Commitar segredo ou <code>.env</code> (<code>.gitignore</code> já ignora <code>.env</code>).</li>
+      <li>Depender do fallback <code>habitquest-secret-dev</code> de <code>JWT_SECRET</code> em produção (definir a variável).</li>
+      <li>Commitar arquivos <code>*.db</code> nem a pasta de dados do SQLite (ambos no <code>.gitignore</code>).</li>
+      <li>Pular os hooks (<code>--no-verify</code>) sem pedido explícito.</li>
+      <li>Colocar regra de negócio em controller ou rota; ela vive em <code>packages/api/src/domain/</code> e <code>packages/api/src/application/</code>.</li>
+    </ul></div>
+  </div>
+  <h3>Dados pessoais (LGPD)</h3>
+  <p>O sistema guarda e-mail, nome, avatar e hash de senha (<code>packages/api/src/infrastructure/database/connection.ts</code>). Política de retenção, exclusão de conta e consentimento: <span class="tbd">a definir</span> (nenhuma fonte encontrada). Exemplos em testes e docs devem ser fictícios.</p>
+  <h3>Arquivos de dono único</h3>
+  <p><span class="tbd">a definir</span>: não há CODEOWNERS nem regra equivalente no repositório.</p>
+</section>
+
+<section id="como-fazer">
+  <h2>Como fazer</h2>
+  <h3 id="receita-rodar">Rodar local</h3>
+<pre><code>npm install
+npm run api   # API em http://localhost:3000 (tsx watch)
+npm run web   # Web em http://localhost:5173 (proxy /api → :3000)
+cp packages/api/.env.example packages/api/.env   # preencher GOOGLE_CLIENT_ID, JWT_SECRET</code></pre>
+  <h3 id="receita-testar">Testar e validar</h3>
+<pre><code>npm test            # api + web (também roda no pre-push)
+npm run test:api
+npm run test:web
+npm run lint
+npm run guia:check  # confere caminhos e âncoras deste guia</code></pre>
+  <h3 id="receita-feature">Criar uma feature (TDD)</h3>
+  <ol>
+    <li>Teste vermelho em <code>packages/api/tests/unit/</code> (domínio/use case) ou <code>packages/api/tests/integration/</code> (endpoint); <code>packages/web/tests/</code> para componentes.</li>
+    <li>Entidade/VO em <code>packages/api/src/domain/</code>, use case em <code>packages/api/src/application/use-cases/</code>, repositório SQLite em <code>packages/api/src/infrastructure/repositories/</code>, rota em <code>packages/api/src/presentation/routes/</code>.</li>
+    <li>Registrar a rota em <code>packages/api/src/app.ts</code>.</li>
+    <li>Tabela nova ou coluna nova: editar <code>runMigrations</code> em <code>packages/api/src/infrastructure/database/connection.ts</code> (não há ferramenta de migration separada).</li>
+  </ol>
+  <h3 id="receita-tela">Criar uma tela</h3>
+  <p>Página em <code>packages/web/src/pages/</code>, rota em <code>packages/web/src/App.tsx</code>, chamada HTTP em <code>packages/web/src/services/</code> usando <code>API_BASE</code>.</p>
+  <h3 id="receita-build">Build / Docker</h3>
+<pre><code>npm run build -w packages/api
+npm run build -w packages/web
+docker compose up --build   # api :3000, web :80 (docker-compose.yml)</code></pre>
+  <h3 id="receita-publicar">Publicar</h3>
+  <p>Há <code>fly.toml</code> (API, região gru, volume SQLite) e o commit <code>317e8a5</code> cita Fly.io + Vercel; <code>HABITQUEST.md</code> (EPIC 18) planeja Cloudflare. Procedimento oficial de publicação: <span class="tbd">a definir</span>. Não há workflow de CI no repositório.</p>
+  <p>Healthcheck: <code>GET /health</code> (<code>packages/api/src/presentation/routes/health.routes.ts</code>).</p>
+</section>
+
+<section id="estado">
+  <h2>Estado atual</h2>
+  <p>Tabela estática: ainda não existe JSON gerado pelo projeto. Fonte: tabelas de epics em <code>HABITQUEST.md</code>.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Epic</th><th>Tema</th><th>Status</th></tr></thead>
+    <tbody>
+    <tr id="epico-1"><td>1</td><td>Setup &amp; quality gates</td><td>Pronto</td></tr>
+    <tr id="epico-2"><td>2</td><td>Hábitos diários</td><td>Pronto, exceto 2.9 (histórico em calendário)</td></tr>
+    <tr id="epico-3"><td>3</td><td>Conquistas</td><td>Pronto</td></tr>
+    <tr id="epico-4"><td>4</td><td>Push notifications</td><td>Pronto</td></tr>
+    <tr id="epico-6"><td>6</td><td>UX &amp; polish (PWA, dark, stats)</td><td>Pronto</td></tr>
+    <tr id="epico-7"><td>7</td><td>Autenticação</td><td>Pronto segundo o doc; veja <a href="#aviso-auth">lacuna</a></td></tr>
+    <tr id="epico-16"><td>16</td><td>Login com Google</td><td>Pronto</td></tr>
+    <tr id="epico-17"><td>17</td><td>Onboarding &amp; perfil</td><td>Em andamento: <code>packages/web/src/pages/OnboardingFlow.tsx</code> e <code>packages/web/src/pages/ProfilePage.tsx</code> existem; doc sem coluna de status</td></tr>
+    <tr id="epico-18"><td>18</td><td>Deploy produção</td><td><span class="tbd">a definir</span> (Cloudflare no doc, Fly.io no código)</td></tr>
+    <tr id="epico-fila"><td>5, 8–15, 19–20</td><td>WhatsApp, wallpaper, juice, social, grupos, motivação, compartilhamento, monetização, SaaS, mobile, lojas</td><td>Fila (roadmap em <code>HABITQUEST.md</code>)</td></tr>
+    </tbody>
+  </table></div>
+  <p>Issues abertas no GitHub: nenhuma (<code>gh issue list --state all</code> retornou vazio).</p>
+</section>
+
+<section id="fontes">
+  <h2>Fontes</h2>
+  <ul>
+    <li><code>HABITQUEST.md</code>: visão, epics, regras de negócio, roadmap (única doc de produto; sem ADRs).</li>
+    <li><code>package.json</code>: scripts do monorepo.</li>
+    <li><code>commitlint.config.mjs</code> e <code>.husky/</code>: quality gates.</li>
+    <li><code>fly.toml</code> e <code>docker-compose.yml</code>: deploy.</li>
+    <li><code>CLAUDE.md</code>: contém o ponteiro para este guia (o projeto não tem AGENTS.md).</li>
+  </ul>
+  <footer>Se este guia divergir de ADR ou código, o código vence e o guia é corrigido no mesmo PR.</footer>
+</section>
+
+</main>
+<script>
+(function () {
+  function focusHash() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ block: "start" });
+    el.classList.remove("hl");
+    void el.offsetWidth;
+    el.classList.add("hl");
+  }
+  window.addEventListener("hashchange", focusHash);
+  window.addEventListener("DOMContentLoaded", focusHash);
+})();
+</script>
+</body>
+</html>

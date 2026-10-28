@@ -12,6 +12,8 @@
     "test:web": "npm run test -w packages/web",
     "lint": "eslint packages --ext .ts,.tsx",
     "format": "prettier --write \"packages/**/*.{ts,tsx,json}\"",
+    "guia": "node bin/guia.mjs",
+    "guia:check": "node bin/guia-check.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
