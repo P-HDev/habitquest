@@ -1,1 +1,2 @@
 npx lint-staged
+if command -v gitleaks >/dev/null 2>&1; then gitleaks protect --staged --redact -v; else echo "aviso: gitleaks não instalado, checagem de segredo pulada"; fi
