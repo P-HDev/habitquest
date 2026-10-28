@@ -21,16 +21,35 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const savedUser = localStorage.getItem('user');
+      return token && savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [loading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    const savedUser = localStorage.getItem('user');
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
+    if (token) {
+      Promise.resolve(authService.getMe(token))
+        .then((freshUser) => {
+          if (freshUser) {
+            setUser((prev) => ({ ...(prev || {}), ...freshUser }));
+            localStorage.setItem('user', JSON.stringify(freshUser));
+          }
+        })
+        .catch(() => {
+          // Token is invalid/expired - clear stale storage
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+          setUser(null);
+        });
     }
-    setLoading(false);
   }, []);
 
   const saveAuth = (result: { accessToken: string; refreshToken: string; user: User }) => {
