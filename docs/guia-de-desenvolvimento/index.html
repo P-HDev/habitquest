@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HabitQuest — Guia de Desenvolvimento</title>
+<meta name="devvault:estagio" content="em-andamento">
 <style>
 :root{
   --bg:#0f172a; --surface:#1e293b; --border:#334155; --text:#f1f5f9; --muted:#94a3b8;
@@ -163,7 +164,7 @@ footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);pa
       <li>Documentar variável nova nos <code>.env.example</code>.</li>
     </ul></div>
     <div class="cannot"><h3>Não pode</h3><ul>
-      <li>Commitar segredo ou <code>.env</code> (<code>.gitignore</code> já ignora <code>.env</code>).</li>
+      <li>Commitar segredo ou <code class="ext">.env</code> (<code>.gitignore</code> já ignora <code class="ext">.env</code>).</li>
       <li>Depender do fallback <code>habitquest-secret-dev</code> de <code>JWT_SECRET</code> em produção (definir a variável).</li>
       <li>Commitar arquivos <code>*.db</code> nem a pasta de dados do SQLite (ambos no <code>.gitignore</code>).</li>
       <li>Pular os hooks (<code>--no-verify</code>) sem pedido explícito.</li>
